@@ -92,7 +92,7 @@
   --secondary: var(--aura-sage);
   --secondary-foreground: var(--aura-ink);
   --muted: oklch(0.900 0.020 120.000);
-  --muted-foreground: var(--aura-medium);
+  --muted-foreground: oklch(0.40 0.04 150);
   --accent: var(--aura-moss);
   --accent-foreground: var(--aura-ink);
   --destructive: oklch(0.577 0.245 27.325);
