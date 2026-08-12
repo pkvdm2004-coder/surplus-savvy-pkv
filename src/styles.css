@@ -12,13 +12,12 @@
  *
  * The :root and .dark blocks define the actual color values using oklch.
  * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
 @theme inline {
+  --font-display: "Libre Baskerville", serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -26,6 +25,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -45,7 +45,15 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-ring-offset-background: var(--background);
+
+  --color-aura-deep: var(--aura-deep);
+  --color-aura-medium: var(--aura-medium);
+  --color-aura-moss: var(--aura-moss);
+  --color-aura-sage: var(--aura-sage);
+  --color-aura-cream: var(--aura-cream);
+  --color-aura-ink: var(--aura-ink);
+  --color-aura-earth: var(--aura-earth);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -63,73 +71,83 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+
+  /* Aura Company palette — Forest & Moss */
+  --aura-deep: oklch(0.340 0.094 161.646);
+  --aura-medium: oklch(0.447 0.115 158.430);
+  --aura-moss: oklch(0.612 0.112 147.946);
+  --aura-sage: oklch(0.806 0.075 131.293);
+  --aura-cream: oklch(0.964 0.008 90.000);
+  --aura-ink: oklch(0.148 0.026 10.710);
+  --aura-earth: oklch(0.720 0.060 80.000);
+
+  --background: var(--aura-cream);
+  --foreground: var(--aura-ink);
+  --card: var(--aura-cream);
+  --card-foreground: var(--aura-ink);
+  --popover: var(--aura-cream);
+  --popover-foreground: var(--aura-ink);
+  --primary: var(--aura-deep);
+  --primary-foreground: var(--aura-cream);
+  --secondary: var(--aura-sage);
+  --secondary-foreground: var(--aura-ink);
+  --muted: oklch(0.900 0.020 120.000);
+  --muted-foreground: var(--aura-medium);
+  --accent: var(--aura-moss);
+  --accent-foreground: var(--aura-ink);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --destructive-foreground: var(--aura-cream);
+  --border: var(--aura-sage);
+  --input: var(--aura-sage);
+  --ring: var(--aura-moss);
+  --chart-1: var(--aura-deep);
+  --chart-2: var(--aura-medium);
+  --chart-3: var(--aura-moss);
+  --chart-4: var(--aura-sage);
+  --chart-5: var(--aura-earth);
+  --sidebar: var(--aura-cream);
+  --sidebar-foreground: var(--aura-ink);
+  --sidebar-primary: var(--aura-deep);
+  --sidebar-primary-foreground: var(--aura-cream);
+  --sidebar-accent: var(--aura-sage);
+  --sidebar-accent-foreground: var(--aura-ink);
+  --sidebar-border: var(--aura-sage);
+  --sidebar-ring: var(--aura-moss);
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
+  --background: var(--aura-ink);
+  --foreground: var(--aura-cream);
+  --card: var(--aura-deep);
+  --card-foreground: var(--aura-cream);
+  --popover: var(--aura-deep);
+  --popover-foreground: var(--aura-cream);
+  --primary: var(--aura-sage);
+  --primary-foreground: var(--aura-ink);
+  --secondary: var(--aura-medium);
+  --secondary-foreground: var(--aura-cream);
+  --muted: var(--aura-medium);
+  --muted-foreground: var(--aura-sage);
+  --accent: var(--aura-moss);
+  --accent-foreground: var(--aura-cream);
   --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --destructive-foreground: var(--aura-cream);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --ring: var(--aura-moss);
+  --chart-1: var(--aura-sage);
+  --chart-2: var(--aura-moss);
+  --chart-3: var(--aura-medium);
+  --chart-4: var(--aura-deep);
+  --chart-5: var(--aura-earth);
+  --sidebar: var(--aura-deep);
+  --sidebar-foreground: var(--aura-cream);
+  --sidebar-primary: var(--aura-sage);
+  --sidebar-primary-foreground: var(--aura-ink);
+  --sidebar-accent: var(--aura-medium);
+  --sidebar-accent-foreground: var(--aura-cream);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --sidebar-ring: var(--aura-moss);
 }
 
 @layer base {
@@ -140,5 +158,11 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
   }
 }
