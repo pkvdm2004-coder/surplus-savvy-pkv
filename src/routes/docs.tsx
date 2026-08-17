@@ -64,7 +64,7 @@ function Docs() {
       const path = `${crypto.randomUUID()}-${file.name.replace(/[^\w.\-]/g, "_")}`;
       const { error: uploadError } = await supabase.storage
         .from("documents")
-        .upload(path, file, { contentType: file.type || undefined });
+        .upload(path, file, file.type ? { contentType: file.type } : undefined);
       if (uploadError) {
         toast.error(`Upload failed: ${file.name}`);
         continue;
