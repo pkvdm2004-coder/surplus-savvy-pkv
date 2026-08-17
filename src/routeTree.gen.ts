@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -17,6 +18,11 @@ import { Route as PricingRouteImport } from './routes/pricing'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -37,12 +43,14 @@ const PricingRoute = PricingRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/docs': typeof DocsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/marketing': typeof MarketingRoute
   '/pricing': typeof PricingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/docs': typeof DocsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/marketing': typeof MarketingRoute
   '/pricing': typeof PricingRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/docs': typeof DocsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/marketing': typeof MarketingRoute
   '/pricing': typeof PricingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/how-it-works' | '/marketing' | '/pricing'
+  fullPaths: '/' | '/docs' | '/how-it-works' | '/marketing' | '/pricing'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/how-it-works' | '/marketing' | '/pricing'
-  id: '__root__' | '/' | '/how-it-works' | '/marketing' | '/pricing'
+  to: '/' | '/docs' | '/how-it-works' | '/marketing' | '/pricing'
+  id: '__root__' | '/' | '/docs' | '/how-it-works' | '/marketing' | '/pricing'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DocsRoute: typeof DocsRoute
   HowItWorksRoute: typeof HowItWorksRoute
   MarketingRoute: typeof MarketingRoute
   PricingRoute: typeof PricingRoute
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DocsRoute: DocsRoute,
   HowItWorksRoute: HowItWorksRoute,
   MarketingRoute: MarketingRoute,
   PricingRoute: PricingRoute,
