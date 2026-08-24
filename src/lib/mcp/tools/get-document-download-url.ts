@@ -10,6 +10,12 @@ export default defineTool({
   inputSchema: {
     id: z.string().uuid().describe("The document id from list_documents."),
   },
+  outputSchema: {
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    expiresInSeconds: z.number(),
+  },
   annotations: { readOnlyHint: true, idempotentHint: false, openWorldHint: false },
   handler: async ({ id }) => {
     const supabase = supabaseAnon();

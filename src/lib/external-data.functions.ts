@@ -9,7 +9,8 @@ import { z } from "zod";
 // Access is governed entirely by the Row Level Security policies on those
 // tables: these functions call the API with the project's public anon key,
 // so whatever anon can do in your Supabase project is what callers can do.
-export type ExternalRow = Record<string, unknown>;
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+export type ExternalRow = Record<string, JsonValue>;
 
 const TABLES = ["inventory", "predictions", "waste_logs"] as const;
 export type ExternalTable = (typeof TABLES)[number];

@@ -10,6 +10,17 @@ export default defineTool({
   inputSchema: {
     limit: z.number().int().min(1).max(100).default(50).describe("Maximum number of documents to return."),
   },
+  outputSchema: {
+    documents: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        size_bytes: z.number(),
+        mime_type: z.string().nullable(),
+        created_at: z.string(),
+      }),
+    ),
+  },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ limit }) => {
     const supabase = supabaseAnon();

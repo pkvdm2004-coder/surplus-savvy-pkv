@@ -34,7 +34,52 @@
             }
           }
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "documents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "size_bytes": {
+                    "type": "number"
+                  },
+                  "mime_type": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "size_bytes",
+                  "mime_type",
+                  "created_at"
+                ]
+              }
+            }
+          },
+          "required": [
+            "documents"
+          ]
+        }
       },
       {
         "name": "get_document_download_url",
@@ -60,7 +105,30 @@
             "id"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "expiresInSeconds": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "url",
+            "expiresInSeconds"
+          ]
+        }
       }
     ]
   }
