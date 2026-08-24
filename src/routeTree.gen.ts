@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -32,6 +33,11 @@ const DocsRoute = DocsRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryRoute = InventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketingRoute = MarketingRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/docs': typeof DocsRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/inventory': typeof InventoryRoute
   '/marketing': typeof MarketingRoute
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/docs': typeof DocsRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/inventory': typeof InventoryRoute
   '/marketing': typeof MarketingRoute
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/docs': typeof DocsRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/inventory': typeof InventoryRoute
   '/marketing': typeof MarketingRoute
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/'
     | '/docs'
     | '/how-it-works'
+    | '/inventory'
     | '/marketing'
     | '/mcp'
     | '/pricing'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/'
     | '/docs'
     | '/how-it-works'
+    | '/inventory'
     | '/marketing'
     | '/mcp'
     | '/pricing'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/'
     | '/docs'
     | '/how-it-works'
+    | '/inventory'
     | '/marketing'
     | '/mcp'
     | '/pricing'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DocsRoute: typeof DocsRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  InventoryRoute: typeof InventoryRoute
   MarketingRoute: typeof MarketingRoute
   McpRoute: typeof McpRoute
   PricingRoute: typeof PricingRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketing': {
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DocsRoute: DocsRoute,
   HowItWorksRoute: HowItWorksRoute,
+  InventoryRoute: InventoryRoute,
   MarketingRoute: MarketingRoute,
   McpRoute: McpRoute,
   PricingRoute: PricingRoute,
