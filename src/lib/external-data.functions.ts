@@ -47,12 +47,9 @@ export const insertExternalRow = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ row: ExternalRow | null; error: string | null }> => {
     const { externalSupabase } = await import("./external-supabase.server");
     const supabase = externalSupabase();
-    const { data: inserted, error } = await supabase
-      .from(data.table)
-      .insert(data.row)
-      .select();
+    const { error } = await supabase.from(data.table).insert(data.row);
     if (error) return { row: null, error: error.message };
-    return { row: ((inserted?.[0] ?? null) as ExternalRow | null), error: null };
+    return { row: null, error: null };
   });
 
 export const updateExternalRow = createServerFn({ method: "POST" })
