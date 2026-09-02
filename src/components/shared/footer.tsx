@@ -7,6 +7,7 @@ const footerLinks = [
   { to: "/marketing", label: "Marketing" },
   { to: "/docs", label: "Docs" },
   { to: "/inventory", label: "Inventory" },
+  { to: "/predictions", label: "Predictions" },
 ];
 
 export function Footer() {

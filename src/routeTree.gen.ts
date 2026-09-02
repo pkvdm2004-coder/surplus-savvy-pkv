@@ -15,6 +15,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as PredictionsRouteImport } from './routes/predictions'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -50,6 +51,11 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PredictionsRoute = PredictionsRouteImport.update({
+  id: '/predictions',
+  path: '/predictions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof InventoryRoute
   '/marketing': typeof MarketingRoute
   '/mcp': typeof McpRoute
+  '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/inventory': typeof InventoryRoute
   '/marketing': typeof MarketingRoute
   '/mcp': typeof McpRoute
+  '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/inventory': typeof InventoryRoute
   '/marketing': typeof MarketingRoute
   '/mcp': typeof McpRoute
+  '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/marketing'
     | '/mcp'
+    | '/predictions'
     | '/pricing'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/marketing'
     | '/mcp'
+    | '/predictions'
     | '/pricing'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/marketing'
     | '/mcp'
+    | '/predictions'
     | '/pricing'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -157,6 +169,7 @@ export interface RootRouteChildren {
   InventoryRoute: typeof InventoryRoute
   MarketingRoute: typeof MarketingRoute
   McpRoute: typeof McpRoute
+  PredictionsRoute: typeof PredictionsRoute
   PricingRoute: typeof PricingRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -207,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/predictions': {
+      id: '/predictions'
+      path: '/predictions'
+      fullPath: '/predictions'
+      preLoaderRoute: typeof PredictionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   InventoryRoute: InventoryRoute,
   MarketingRoute: MarketingRoute,
   McpRoute: McpRoute,
+  PredictionsRoute: PredictionsRoute,
   PricingRoute: PricingRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
