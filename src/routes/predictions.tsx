@@ -224,10 +224,45 @@ function Predictions() {
               )}
 
               {!loading && !error && predictions.length > 0 && (
-                <p className="mt-4 text-xs text-muted-foreground">
-                  Based on inventory records as of {formatDate(new Date().toISOString())}. Risk levels
-                  are estimates to help prioritise action.
-                </p>
+                <>
+                  <p className="mt-4 text-xs text-muted-foreground">
+                    Based on inventory records as of {formatDate(new Date().toISOString())}. Risk levels
+                    are estimates to help prioritise action.
+                  </p>
+
+                  <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="rounded-lg border border-border bg-background/50 p-4">
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${riskBadgeClasses("High")}`}
+                      >
+                        High risk
+                      </span>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Large potential surplus — action recommended soon.
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-background/50 p-4">
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${riskBadgeClasses("Medium")}`}
+                      >
+                        Medium risk
+                      </span>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Moderate potential surplus — monitor sales and expiration.
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-background/50 p-4">
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${riskBadgeClasses("Low")}`}
+                      >
+                        Low risk
+                      </span>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Low or no potential surplus — no immediate action needed.
+                      </p>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
