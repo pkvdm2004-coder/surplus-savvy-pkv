@@ -52,10 +52,10 @@ function calculatePredictions(rows: InventoryRow[]): Prediction[] {
     .map((row) => {
       const expiration = startOfDay(new Date(row.expiration_date));
       const diffMs = expiration.getTime() - today.getTime();
-      const days_until_expiration = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const days_until_expiration = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 
       const rawSurplus = Number(row.quantity) - Number(row.daily_sales) * days_until_expiration;
-      const potential_surplus = Math.max(0, rawSurplus);
+      const potential_surplus = Math.min(Number(row.quantity), Math.max(0, rawSurplus));
 
       let risk_level: Prediction["risk_level"] = "Low";
       if (potential_surplus > 0) {
