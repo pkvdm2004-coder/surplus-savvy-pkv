@@ -42,11 +42,33 @@ type ResearchEntry = {
   created_at: string;
 };
 
+const TYPE_FILTERS = ["All", "Direct Competitor", "Indirect Competitor", "Substitute"] as const;
+const MARKET_FILTERS = ["All", "Global", "Mexico"] as const;
+
 function Research() {
   const [projects, setProjects] = useState<ResearchProject[]>([]);
   const [entries, setEntries] = useState<ResearchEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("All");
+  const [marketFilter, setMarketFilter] = useState<string>("All");
+
+  const filteredEntries = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return entries.filter((entry) => {
+      const matchesSearch =
+        !query ||
+        entry.name.toLowerCase().includes(query) ||
+        entry.problem.toLowerCase().includes(query) ||
+        entry.strength.toLowerCase().includes(query) ||
+        entry.limitation.toLowerCase().includes(query);
+      const matchesType = typeFilter === "All" || entry.type === typeFilter;
+      const matchesMarket = marketFilter === "All" || entry.market === marketFilter;
+      return matchesSearch && matchesType && matchesMarket;
+    });
+  }, [entries, searchQuery, typeFilter, marketFilter]);
 
   const load = useCallback(async () => {
     setLoading(true);
