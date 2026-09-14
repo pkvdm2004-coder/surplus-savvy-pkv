@@ -181,6 +181,61 @@ function Research() {
                   <h2 className="font-display text-2xl font-bold">Research entries</h2>
                 </div>
 
+                {entries.length > 0 && (
+                  <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end">
+                    <div className="flex-1">
+                      <label htmlFor="research-search" className="mb-1.5 block text-sm font-medium text-aura-ink">
+                        Search
+                      </label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                          id="research-search"
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search by name, problem, strength, or limitation"
+                          className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-4 text-sm text-aura-ink placeholder:text-muted-foreground focus:border-aura-deep focus:outline-none focus:ring-1 focus:ring-aura-deep"
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:w-44">
+                      <label htmlFor="research-type" className="mb-1.5 block text-sm font-medium text-aura-ink">
+                        Type
+                      </label>
+                      <select
+                        id="research-type"
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-aura-ink focus:border-aura-deep focus:outline-none focus:ring-1 focus:ring-aura-deep"
+                      >
+                        {TYPE_FILTERS.map((value) => (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="sm:w-40">
+                      <label htmlFor="research-market" className="mb-1.5 block text-sm font-medium text-aura-ink">
+                        Market
+                      </label>
+                      <select
+                        id="research-market"
+                        value={marketFilter}
+                        onChange={(e) => setMarketFilter(e.target.value)}
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-aura-ink focus:border-aura-deep focus:outline-none focus:ring-1 focus:ring-aura-deep"
+                      >
+                        {MARKET_FILTERS.map((value) => (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
                 {entries.length === 0 ? (
                   <div className="mt-8 rounded-lg border border-dashed border-border bg-background/50 p-8 text-center">
                     <BookOpen className="mx-auto h-8 w-8 text-muted-foreground" />
@@ -189,9 +244,17 @@ function Research() {
                       Findings will appear here once they are added to the research base.
                     </p>
                   </div>
+                ) : filteredEntries.length === 0 ? (
+                  <div className="mt-8 rounded-lg border border-dashed border-border bg-background/50 p-8 text-center">
+                    <BookOpen className="mx-auto h-8 w-8 text-muted-foreground" />
+                    <p className="mt-4 font-medium text-aura-ink">No matching entries</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Try adjusting your search or filters to find what you are looking for.
+                    </p>
+                  </div>
                 ) : (
                   <div className="mt-8 grid gap-6">
-                    {entries.map((entry) => (
+                    {filteredEntries.map((entry) => (
                       <article
                         key={String(entry.id)}
                         className="rounded-xl border border-border bg-card/40 p-6"
