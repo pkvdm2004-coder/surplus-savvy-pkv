@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { listExternalRows } from "@/lib/external-data.functions";
-import { Loader2, AlertCircle, BookOpen, FlaskConical, ExternalLink } from "lucide-react";
+import { Loader2, AlertCircle, BookOpen, FlaskConical, ExternalLink, Search } from "lucide-react";
 
 export const Route = createFileRoute("/research")({
   component: Research,
