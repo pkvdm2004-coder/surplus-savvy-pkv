@@ -17,6 +17,7 @@ import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PredictionsRouteImport } from './routes/predictions'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ResearchRouteImport } from './routes/research'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -61,6 +62,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotmcpChar93ListToolsRoute =
   Char91DotmcpChar93ListToolsRouteImport.update({
     id: '/.mcp/list-tools',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
+  '/research': typeof ResearchRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
+  '/research': typeof ResearchRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
+  '/research': typeof ResearchRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/predictions'
     | '/pricing'
+    | '/research'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/.mcp/invoke-tool/$tool'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/predictions'
     | '/pricing'
+    | '/research'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/.mcp/invoke-tool/$tool'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/predictions'
     | '/pricing'
+    | '/research'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/.mcp/invoke-tool/$tool'
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   PredictionsRoute: typeof PredictionsRoute
   PricingRoute: typeof PricingRoute
+  ResearchRoute: typeof ResearchRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.mcp/list-tools': {
       id: '/.mcp/list-tools'
       path: '/.mcp/list-tools'
@@ -267,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   PredictionsRoute: PredictionsRoute,
   PricingRoute: PricingRoute,
+  ResearchRoute: ResearchRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
