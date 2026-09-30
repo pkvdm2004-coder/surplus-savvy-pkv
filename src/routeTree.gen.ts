@@ -17,6 +17,7 @@ import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PredictionsRouteImport } from './routes/predictions'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ProductRouteImport } from './routes/product'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -62,6 +63,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductRoute = ProductRouteImport.update({
+  id: '/product',
+  path: '/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResearchRoute = ResearchRouteImport.update({
   id: '/research',
   path: '/research',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
   '/research': typeof ResearchRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
   '/research': typeof ResearchRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/predictions': typeof PredictionsRoute
   '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
   '/research': typeof ResearchRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/predictions'
     | '/pricing'
+    | '/product'
     | '/research'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/predictions'
     | '/pricing'
+    | '/product'
     | '/research'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/predictions'
     | '/pricing'
+    | '/product'
     | '/research'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   PredictionsRoute: typeof PredictionsRoute
   PricingRoute: typeof PricingRoute
+  ProductRoute: typeof ProductRoute
   ResearchRoute: typeof ResearchRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -247,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/product': {
+      id: '/product'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/research': {
       id: '/research'
       path: '/research'
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   PredictionsRoute: PredictionsRoute,
   PricingRoute: PricingRoute,
+  ProductRoute: ProductRoute,
   ResearchRoute: ResearchRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
