@@ -42,7 +42,7 @@ function Cell({ v }: { v: string | boolean }) {
 function Pricing() {
   const [plan, setPlan] = useState<Tier["name"]>("Professional");
   const [input, setInput] = useState("25");
-  const selected = tiers.find((t) => t.name === plan) ?? tiers[1];
+  const selected = (tiers.find((t) => t.name === plan) ?? tiers[1]) as Tier;
   const customers = clampCustomers(Number(input));
   const { mrr, arr } = calcRevenue(selected.monthly, customers);
 
