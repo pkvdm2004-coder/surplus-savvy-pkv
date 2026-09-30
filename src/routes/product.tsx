@@ -3,6 +3,7 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { tiers } from "@/lib/plans";
 import { BarChart3, Boxes, Check, Leaf, LineChart, Search } from "lucide-react";
 
 export const Route = createFileRoute("/product")({
@@ -18,30 +19,6 @@ export const Route = createFileRoute("/product")({
     ],
   }),
 });
-
-const tiers = [
-  {
-    name: "Starter",
-    price: "$99",
-    target: "Small restaurants getting started with food waste management.",
-    features: ["Inventory management", "Food waste tracking", "Basic dashboard", "Basic reporting", "Up to 1 location", "Email support"],
-    popular: false,
-  },
-  {
-    name: "Professional",
-    price: "$249",
-    target: "Restaurants that want advanced insights and predictive analytics.",
-    features: ["Everything in Starter", "Predictions and forecasting", "Research & benchmarking", "Advanced analytics", "Risk and opportunity insights", "Up to 5 locations", "Priority support"],
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    price: "$599",
-    target: "Restaurant groups and multi-location businesses.",
-    features: ["Everything in Professional", "Multi-location management", "Advanced forecasting", "Custom analytics and reporting", "Higher usage limits", "Dedicated account manager", "Custom integrations"],
-    popular: false,
-  },
-];
 
 const modules = [
   { icon: Boxes, title: "Inventory", text: "Track and manage your ingredients to minimize waste.", to: "/inventory" as const },
