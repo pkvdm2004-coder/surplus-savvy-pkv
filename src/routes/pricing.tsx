@@ -5,7 +5,7 @@ import { Footer } from "@/components/shared/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Check, Minus, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { insertExternalRow } from "@/lib/external-data.functions";
 import { tiers, calcRevenue, clampCustomers, usd, MIN_CUSTOMERS, MAX_CUSTOMERS, type Tier } from "@/lib/plans";
 
 export const Route = createFileRoute("/pricing")({
@@ -57,13 +57,24 @@ function Pricing() {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("pricing_scenarios").insert({
-      plan: selected.name,
-      monthly_price: selected.monthly,
-      restaurant_count: customers,
-      monthly_revenue: mrr,
-      annual_revenue: arr,
-    });
+    let error: string | null = null;
+    try {
+      const res = await insertExternalRow({
+        data: {
+          table: "pricing_scenarios",
+          row: {
+            plan: selected.name,
+            monthly_price: selected.monthly,
+            restaurant_count: customers,
+            monthly_revenue: mrr,
+            annual_revenue: arr,
+          },
+        },
+      });
+      error = res.error;
+    } catch (e) {
+      error = e instanceof Error ? e.message : "Unknown error";
+    }
     setSaving(false);
     setSaveMsg(
       error
