@@ -4,7 +4,8 @@ import { Navbar } from "@/components/shared/navbar";
 import { Footer } from "@/components/shared/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Check, Minus } from "lucide-react";
+import { Check, Minus, Save } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { tiers, calcRevenue, clampCustomers, usd, MIN_CUSTOMERS, MAX_CUSTOMERS, type Tier } from "@/lib/plans";
 
 export const Route = createFileRoute("/pricing")({
@@ -42,9 +43,34 @@ function Cell({ v }: { v: string | boolean }) {
 function Pricing() {
   const [plan, setPlan] = useState<Tier["name"]>("Professional");
   const [input, setInput] = useState("25");
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const selected = (tiers.find((t) => t.name === plan) ?? tiers[1]) as Tier;
   const customers = clampCustomers(Number(input));
   const { mrr, arr } = calcRevenue(selected.monthly, customers);
+
+  async function saveScenario() {
+    setSaveMsg(null);
+    const vals = [selected.monthly, customers, mrr, arr];
+    if (customers < MIN_CUSTOMERS || customers > MAX_CUSTOMERS || vals.some((v) => !Number.isFinite(v) || v < 0)) {
+      setSaveMsg({ ok: false, text: "Please enter between 1 and 500 restaurants before saving." });
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("pricing_scenarios").insert({
+      plan: selected.name,
+      monthly_price: selected.monthly,
+      restaurant_count: customers,
+      monthly_revenue: mrr,
+      annual_revenue: arr,
+    });
+    setSaving(false);
+    setSaveMsg(
+      error
+        ? { ok: false, text: "We couldn't save this scenario. Please try again in a moment." }
+        : { ok: true, text: `Saved: ${selected.name}, ${customers} restaurants — ${usd(mrr)}/mo, ${usd(arr)}/yr.` },
+    );
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
@@ -159,6 +185,18 @@ function Pricing() {
                 <div className="flex items-center justify-between rounded-lg border border-border p-4">
                   <span className="text-sm text-muted-foreground">Monthly plan price</span>
                   <span className="font-display text-xl font-bold">{usd(selected.monthly)}</span>
+                </div>
+
+                <div>
+                  <Button onClick={saveScenario} disabled={saving} variant="outline" className="w-full">
+                    <Save className="mr-2 h-4 w-4" />
+                    {saving ? "Saving…" : "Save Scenario"}
+                  </Button>
+                  {saveMsg && (
+                    <p role="status" className={`mt-2 text-sm ${saveMsg.ok ? "text-aura-moss" : "text-destructive"}`}>
+                      {saveMsg.text}
+                    </p>
+                  )}
                 </div>
               </div>
 
