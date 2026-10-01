@@ -41,6 +41,36 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_scenarios: {
+        Row: {
+          annual_revenue: number
+          created_at: string
+          id: string
+          monthly_price: number
+          monthly_revenue: number
+          plan: string
+          restaurant_count: number
+        }
+        Insert: {
+          annual_revenue: number
+          created_at?: string
+          id?: string
+          monthly_price: number
+          monthly_revenue: number
+          plan: string
+          restaurant_count: number
+        }
+        Update: {
+          annual_revenue?: number
+          created_at?: string
+          id?: string
+          monthly_price?: number
+          monthly_revenue?: number
+          plan?: string
+          restaurant_count?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
