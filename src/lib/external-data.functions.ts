@@ -12,7 +12,7 @@ import { z } from "zod";
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 export type ExternalRow = Record<string, JsonValue>;
 
-const TABLES = ["inventory", "predictions", "waste_logs", "research_projects", "research_entries"] as const;
+const TABLES = ["inventory", "predictions", "waste_logs", "research_projects", "research_entries", "pricing_scenarios"] as const;
 export type ExternalTable = (typeof TABLES)[number];
 
 export const listExternalRows = createServerFn({ method: "GET" })
