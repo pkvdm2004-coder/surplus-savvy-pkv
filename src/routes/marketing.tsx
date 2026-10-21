@@ -1,173 +1,70 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Navbar } from "@/components/shared/navbar";
-import { Footer } from "@/components/shared/footer";
-import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Quote, Download, ArrowRight } from "lucide-react";
-
-export const Route = createFileRoute("/marketing")({
-  component: Marketing,
-  head: () => ({
-    meta: [
-      { title: "Marketing Resources — AURA Company" },
-      { name: "description", content: "Case studies, marketing assets, and resources for restaurants and partners promoting food waste reduction with AURA." },
-      { property: "og:title", content: "Marketing Resources — AURA Company" },
-      { property: "og:description", content: "Case studies, marketing assets, and resources for restaurants and partners promoting food waste reduction with AURA." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-});
-
-const caseStudies = [
-  {
-    name: "Bistro Lumière",
-    location: "Portland, OR",
-    metric: "28%",
-    metricLabel: "waste reduction",
-    quote: "AURA showed us where our prep was consistently outrunning our sales. Within a month we had cut nightly waste by more than a quarter without running out of anything.",
-  },
-  {
-    name: "Harbor Group",
-    location: "Miami, FL",
-    metric: "$47k",
-    metricLabel: "annual savings",
-    quote: "Across six locations, AURA unified how we forecast surplus. The recommendation cards became part of our daily manager briefing.",
-  },
-  {
-    name: "Green Leaf Kitchen",
-    location: "Austin, TX",
-    metric: "12 tons",
-    metricLabel: "food diverted",
-    quote: "We already cared about sustainability. AURA gave us the data to prove our impact to guests and investors with real numbers.",
-  },
-];
-
-const resources = [
-  {
-    title: "The Restaurant Waste Audit Template",
-    description: "A practical workbook to identify where waste is hiding in your kitchen.",
-    cta: "Download PDF",
-  },
-  {
-    title: "AURA Partner Press Kit",
-    description: "Logos, brand guidelines, and partner-ready copy for media and integrations.",
-    cta: "View assets",
-  },
-  {
-    title: "ROI Calculator",
-    description: "Estimate your potential savings based on location size and average daily covers.",
-    cta: "Calculate savings",
-  },
-];
-
+import { createFileRoute } from '@tanstack/react-router';
+import { useState, type ReactNode } from 'react';
+import { Leaf, CalendarDays, Video, MessageSquare, FlaskConical, Download, ArrowRight, UserRound, Bookmark } from 'lucide-react';
+import { Navbar } from '@/components/shared/navbar';
+import { Footer } from '@/components/shared/footer';
+import { Button } from '@/components/ui/button';
+import { ContentActions } from '@/components/marketing/content-actions';
+import { Comparison } from '@/components/marketing/comparison';
+import { SavedAssets } from '@/components/marketing/saved-assets';
+import { brand, landingCopy, socialPosts, videoScripts, campaignDays } from '@/lib/marketing/content';
+import { formatPost, formatScript, marketingText, calendarCSV, downloadText } from '@/lib/marketing/export';
+import heroImage from '@/assets/hero-kitchen.jpg';
+export const Route = createFileRoute('/marketing')({ component: Marketing, head: () => ({ meta: [
+  { title: 'AURA Marketing Engine — Content, Campaigns & Copy' },
+  { name: 'description', content: 'Organize AURA brand materials, social posts, video scripts, a 14-day campaign, and controlled copy comparisons.' },
+  { property: 'og:title', content: 'AURA Marketing Engine — Content, Campaigns & Copy' },
+  { property: 'og:description', content: 'Reusable restaurant-focused marketing content, campaign planning, and preference comparisons for AURA.' },
+  { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' },
+] }) });
+const sections = ['Overview', 'Brand System', 'Target Persona', 'Landing Copy', 'Social Posts', 'Video Scripts', 'Campaign Calendar', 'A/B Tester', 'Saved Assets'] as const;
+type SectionName = typeof sections[number];
+function Section({ title, children, action }: { title: string; children: ReactNode; action?: ReactNode }) {
+  return <section className="min-w-0"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><h2 className="text-2xl">{title}</h2>{action}</div>{children}</section>;
+}
+function BrandSystem() {
+  const colors = [{ label: 'Deep green', value: '#1a3c2a', cls: 'bg-aura-deep' }, { label: 'Medium green', value: '#2d5a3d', cls: 'bg-aura-medium' }, { label: 'Moss', value: '#5a8a5c', cls: 'bg-aura-moss' }, { label: 'Light sage', value: '#a0c49d', cls: 'bg-aura-sage' }, { label: 'Warm cream', value: 'Background', cls: 'bg-aura-cream' }];
+  return <div className="grid gap-8 md:grid-cols-2"><div><p className="flex items-center gap-2 font-display text-3xl font-bold text-primary"><Leaf />{brand.name}</p><h3 className="mt-6 text-base">Brand positioning</h3><p className="mt-2 text-muted-foreground">{brand.positioning}</p><h3 className="mt-6 text-base">Brand mission</h3><p className="mt-2 leading-relaxed text-muted-foreground">{brand.mission}</p><h3 className="mt-6 text-base">Tone of voice</h3><ul className="mt-3 flex flex-wrap gap-2">{brand.tone.map(t => <li key={t} className="rounded-md bg-secondary/40 px-3 py-1 text-sm">{t}</li>)}</ul></div><div><h3 className="text-base">Color palette</h3><div className="mt-4 flex flex-wrap gap-4">{colors.map(c => <div key={c.label} className="w-24"><div className={`h-12 w-12 rounded-full border border-border ${c.cls}`} /><p className="mt-2 text-sm font-medium">{c.label}</p><p className="text-xs text-muted-foreground">{c.value}</p></div>)}</div><h3 className="mt-7 text-base">Typography</h3><p className="mt-4 font-display text-2xl">Libre Baskerville</p><p className="mt-1 text-sm text-muted-foreground">Headings</p><p className="mt-4 text-xl">IBM Plex Sans</p><p className="mt-1 text-sm text-muted-foreground">Body and interface</p></div></div>;
+}
+function Persona() {
+  return <div className="grid gap-8 md:grid-cols-[1fr_2fr]"><div><div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary/50"><UserRound className="h-8 w-8 text-primary" /></div><h3 className="mt-4 text-2xl">Alex</h3><p className="mt-2 font-medium">Restaurant Operations Manager</p><p className="mt-4 text-sm text-muted-foreground">Illustrative persona — not research-validated.</p></div><div className="grid gap-6 sm:grid-cols-2">{[['Challenges', 'Excess inventory', 'Food waste', 'Unpredictable demand', 'High operational costs', 'Limited visibility into performance'], ['Goals', 'Reduce unnecessary expenses', 'Improve inventory decisions', 'Minimize food waste', 'Improve operational efficiency', 'Make data-driven decisions']].map(([title, ...items]) => <div key={title}><h3 className="text-lg">{title}</h3><ul className="mt-4 list-disc space-y-3 pl-5 text-sm text-muted-foreground">{items.map(i => <li key={i}>{i}</li>)}</ul></div>)}</div></div>;
+}
+function LandingCopy() {
+  const labels = { headline: 'Headline', subheadline: 'Subheadline', primaryCTA: 'Primary CTA · /product', secondaryCTA: 'Secondary CTA · /pricing' };
+  return <div className="grid gap-5 sm:grid-cols-2">{Object.entries(landingCopy).map(([key, text]) => <article key={key} className="rounded-lg border border-border bg-card p-5"><p className="text-xs font-semibold uppercase text-muted-foreground">{labels[key as keyof typeof labels]}</p><p className={`my-5 ${key === 'headline' ? 'font-display text-2xl font-bold text-primary' : 'leading-relaxed'}`}>{text}</p><ContentActions text={text} filename={`aura-${key}.txt`} save /></article>)}</div>;
+}
+function SocialPosts() {
+  return <div className="grid gap-5 lg:grid-cols-2">{socialPosts.map((post, index) => <article key={post.id} id={post.id} className="min-w-0 scroll-mt-28 rounded-lg border border-border bg-card p-6"><div className="flex items-center justify-between gap-3"><span className="text-xs font-semibold uppercase text-primary">{post.platform}</span><span className="text-xs text-muted-foreground">{String(index + 1).padStart(2, '0')} / 10</span></div><h3 className="mt-3 text-xl">{post.title}</h3><p className="mt-5 whitespace-pre-line text-sm leading-relaxed">{post.caption}</p><p className="mt-4 break-words text-sm text-primary">{post.hashtags.join(' ')}</p><div className="my-5 border-t border-border pt-4"><p className="text-xs font-semibold uppercase text-muted-foreground">Suggested visual</p><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{post.visual}</p></div><ContentActions text={formatPost(post)} filename={`aura-${post.id}.txt`} save /></article>)}</div>;
+}
+function Scripts() {
+  return <div className="space-y-6">{videoScripts.map(script => <article key={script.id} id={script.id} className="scroll-mt-28 rounded-lg border border-border bg-card p-5 sm:p-6"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-semibold text-primary">{script.platform} · {script.duration}</p><h3 className="mt-2 text-xl">{script.title}</h3></div><Video className="h-6 w-6 text-primary" /></div><p className="my-5 border-l-2 border-primary pl-4 font-medium">{script.hook}</p><div className="space-y-5">{script.scenes.map((scene, index) => <div key={scene.time} className="grid gap-3 border-t border-border pt-4 sm:grid-cols-[100px_1fr]"><p className="text-sm font-semibold text-primary">Scene {index + 1}<br /><span className="text-xs font-normal text-muted-foreground">{scene.time}</span></p><div><p className="text-sm leading-relaxed"><strong>Visual direction: </strong>{scene.visual}</p><p className="mt-2 text-sm leading-relaxed text-muted-foreground"><strong>Voiceover: </strong>{scene.voiceover}</p></div></div>)}</div><p className="my-5 text-sm font-medium">Closing CTA: {script.cta}</p><ContentActions text={formatScript(script)} filename={`aura-${script.id}.txt`} save /></article>)}</div>;
+}
+function Calendar({ openAsset }: { openAsset: (id: string) => void }) {
+  return <><p className="mb-5 text-sm text-muted-foreground">14 planned days · Draft campaign · Nothing has been scheduled or published.</p><div className="hidden overflow-x-auto md:block"><table className="w-full text-left text-sm"><thead className="bg-secondary/30"><tr>{['Day', 'Channel', 'Content type', 'Objective', 'Planned content', 'Status'].map(h => <th className="p-3 font-semibold" key={h}>{h}</th>)}</tr></thead><tbody>{campaignDays.map(day => <tr key={day.day} className="border-b border-border"><td className="p-3 font-semibold">{day.day}</td><td className="p-3">{day.platform}</td><td className="p-3">{day.type}</td><td className="p-3 text-muted-foreground">{day.objective}</td><td className="max-w-xs p-3"><Button variant="link" className="h-auto whitespace-normal p-0 text-left" onClick={() => openAsset(day.assetId)}>{day.plannedContent}<ArrowRight /></Button></td><td className="p-3 text-muted-foreground">{day.status}</td></tr>)}</tbody></table></div><ol className="space-y-4 md:hidden">{campaignDays.map(day => <li key={day.day} className="rounded-lg border border-border p-4"><div className="flex justify-between gap-3"><h3 className="text-base">Day {day.day}</h3><span className="text-xs text-muted-foreground">{day.status}</span></div><p className="mt-2 text-xs font-semibold text-primary">{day.platform} · {day.type}</p><p className="mt-2 text-sm text-muted-foreground">{day.objective}</p><Button variant="link" className="mt-3 h-auto whitespace-normal p-0 text-left" onClick={() => openAsset(day.assetId)}>{day.plannedContent}<ArrowRight /></Button></li>)}</ol></>;
+}
 function Marketing() {
-  return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-
-      <main>
-        {/* Hero */}
-        <section className="bg-aura-cream py-24">
-          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold leading-tight text-aura-ink sm:text-5xl">
-              Marketing that matters
-            </h1>
-            <p className="mt-6 text-lg text-muted-foreground">
-              Turn waste reduction into a story guests, staff, and investors want to share. Explore case studies, partner assets, and practical tools.
-            </p>
-          </div>
-        </section>
-
-        {/* Case studies */}
-        <section className="py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl font-bold sm:text-4xl">
-              How restaurants win with AURA
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-muted-foreground">
-              Real results from kitchens that stopped guessing and started forecasting.
-            </p>
-            <div className="mt-14 grid gap-8 lg:grid-cols-3">
-              {caseStudies.map((study) => (
-                <Card key={study.name} className="border-border bg-card/60">
-                  <CardHeader>
-                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-aura-sage/40">
-                      <Quote className="h-5 w-5 text-aura-deep" />
-                    </div>
-                    <CardTitle className="font-display text-xl">{study.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{study.location}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{study.quote}</p>
-                    <div className="mt-6 flex items-baseline gap-2 border-t border-border pt-4">
-                      <span className="font-display text-3xl font-bold text-aura-deep">
-                        {study.metric}
-                      </span>
-                      <span className="text-sm text-muted-foreground">{study.metricLabel}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Resources */}
-        <section className="bg-aura-sage/20 py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl font-bold sm:text-4xl">
-              Tools and resources
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-muted-foreground">
-              Downloadable guides and partner assets to help you spread the word about waste reduction.
-            </p>
-            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {resources.map((resource) => (
-                <div
-                  key={resource.title}
-                  className="rounded-xl border border-border bg-background p-6"
-                >
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-aura-sage/40">
-                    <Download className="h-5 w-5 text-aura-deep" />
-                  </div>
-                  <h3 className="font-display text-xl font-bold">{resource.title}</h3>
-                  <p className="mt-2 text-muted-foreground">{resource.description}</p>
-                  <Button asChild variant="link" className="mt-4 p-0">
-                    <Link to="/">
-                      {resource.cta}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="py-24">
-          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Want to partner with AURA?
-            </h2>
-            <p className="mt-6 text-lg text-muted-foreground">
-              We work with restaurant groups, sustainability consultants, and technology platforms to bring waste intelligence to more kitchens.
-            </p>
-            <div className="mt-8 flex justify-center gap-4">
-              <Button asChild size="lg">
-                <Link to="/pricing">Become a partner</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/">Back to home</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
+  const [active, setActive] = useState<SectionName>('Overview');
+  function openAsset(id: string) { setActive(id.startsWith('post') ? 'Social Posts' : 'Video Scripts'); setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' }), 80); }
+  function exportAll() { downloadText('aura-marketing-materials.txt', marketingText()); }
+  const stats = [{ icon: MessageSquare, value: socialPosts.length, label: 'Social posts', tab: 'Social Posts' }, { icon: Video, value: videoScripts.length, label: 'Video scripts', tab: 'Video Scripts' }, { icon: CalendarDays, value: campaignDays.length, label: 'Campaign days', tab: 'Campaign Calendar' }, { icon: FlaskConical, value: 2, label: 'Copy comparisons', tab: 'A/B Tester' }] as const;
+  return <div className="min-h-screen bg-background"><Navbar /><main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="flex flex-wrap items-start justify-between gap-5"><div className="max-w-3xl"><p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase text-primary"><Leaf className="h-4 w-4" />AURA · Content workspace</p><h1 className="text-3xl sm:text-4xl">Marketing Engine</h1><p className="mt-4 text-muted-foreground">Create, organize, and test marketing content to grow AURA and attract restaurant customers.</p></div><Button variant="outline" onClick={exportAll}><Download />Export materials</Button></div>
+    <div className="my-7 flex flex-wrap gap-1 border-b border-border pb-3" role="tablist" aria-label="Marketing sections">{sections.map(section => <Button key={section} role="tab" aria-selected={active === section} aria-controls="marketing-panel" id={`tab-${section.replaceAll(' ', '-')}`} variant={active === section ? 'secondary' : 'ghost'} size="sm" onClick={() => setActive(section)}>{section}</Button>)}</div>
+    <div role="tabpanel" id="marketing-panel" aria-labelledby={`tab-${active.replaceAll(' ', '-')}`}>
+    {active === 'Overview' && <><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{stats.map(stat => <Button key={stat.label} variant="outline" className="h-auto justify-start gap-4 whitespace-normal p-5 text-left" onClick={() => setActive(stat.tab)}><stat.icon className="text-primary" /><span><strong className="block text-2xl">{stat.value}</strong><span className="text-sm text-muted-foreground">{stat.label}</span></span></Button>)}</div><div className="mt-9 grid gap-6 lg:grid-cols-3">{[
+      { title: 'Brand System', tab: 'Brand System', content: <><Leaf className="mb-4 h-7 w-7 text-primary" /><p className="font-display text-2xl font-bold text-primary">AURA</p><p className="mt-3 leading-relaxed">{brand.positioning}</p><p className="mt-5 text-sm text-muted-foreground">Professional · Practical · Clear · Optimistic · Sustainability-focused</p></> },
+      { title: 'Target Persona', tab: 'Target Persona', content: <><UserRound className="mb-4 h-7 w-7 text-primary" /><p className="font-display text-2xl font-bold">Alex</p><p className="mt-3">Restaurant Operations Manager</p><p className="mt-5 text-sm text-muted-foreground">Illustrative persona, not research-validated. Focused on inventory, waste, demand, and operating costs.</p></> },
+      { title: 'Landing Page Copy', tab: 'Landing Copy', content: <><p className="font-display text-xl font-bold leading-snug text-primary">{landingCopy.headline}</p><p className="mt-4 text-sm leading-relaxed text-muted-foreground">{landingCopy.subheadline}</p></> },
+    ].map(item => <article key={item.title} className="flex min-w-0 flex-col rounded-lg border border-border bg-card p-6"><div className="mb-6 flex justify-between gap-3"><h2 className="text-lg">{item.title}</h2></div><div>{item.content}</div><Button variant="link" className="mt-auto justify-start px-0 pt-6" onClick={() => setActive(item.tab as SectionName)}>View details<ArrowRight /></Button></article>)}</div>
+      <div className="mt-9 grid gap-6 md:grid-cols-2"><article className="overflow-hidden rounded-lg border border-border bg-card"><img src={heroImage} alt="Restaurant chef preparing ingredients" width={1344} height={896} className="h-48 w-full object-cover" /><div className="p-6"><p className="text-xs font-semibold text-primary">SOCIAL CONTENT · DRAFTS</p><h2 className="mt-3 text-xl">A story for every stage</h2><p className="mt-3 text-sm text-muted-foreground">Ten complete posts, from introducing AURA to inviting restaurant managers to explore the product.</p><Button variant="link" className="mt-4 px-0" onClick={() => setActive('Social Posts')}>Open social library<ArrowRight /></Button></div></article><div className="flex flex-col justify-center"><CalendarDays className="h-7 w-7 text-primary" /><h2 className="mt-4 text-2xl">14 days. One clear direction.</h2><p className="mt-4 leading-relaxed text-muted-foreground">Brand awareness, product education, value, and calls to action. A planned campaign connected to the content library.</p><Button variant="link" className="mt-4 justify-start px-0" onClick={() => setActive('Campaign Calendar')}>Open campaign calendar<ArrowRight /></Button><p className="mt-6 border-t border-border pt-4 text-sm text-muted-foreground">Asset saving is not configured. Copy and export are available.</p></div></div></>}
+    {active === 'Brand System' && <Section title="Brand System"><BrandSystem /></Section>}
+    {active === 'Target Persona' && <Section title="Target Persona"><Persona /></Section>}
+    {active === 'Landing Copy' && <Section title="Landing Page Copy"><LandingCopy /></Section>}
+    {active === 'Social Posts' && <Section title="Social Media Posts (10)" action={<Button variant="outline" onClick={() => downloadText('aura-social-posts.txt', socialPosts.map(formatPost).join('\n\n---\n\n'))}><Download />Export posts</Button>}><SocialPosts /></Section>}
+    {active === 'Video Scripts' && <Section title="Video Scripts (3)" action={<Button variant="outline" onClick={() => downloadText('aura-video-scripts.txt', videoScripts.map(formatScript).join('\n\n---\n\n'))}><Download />Export scripts</Button>}><Scripts /></Section>}
+    {active === 'Campaign Calendar' && <Section title="14-Day Campaign Calendar" action={<Button variant="outline" onClick={() => downloadText('aura-campaign-calendar.csv', calendarCSV(), 'text/csv;charset=utf-8')}><Download />Export CSV</Button>}><Calendar openAsset={openAsset} /></Section>}
+    {active === 'A/B Tester' && <Section title="A/B Copy Comparison"><p className="mb-6 text-sm text-muted-foreground">Controlled comparison only. Selections reflect your preference, not traffic, conversions, or statistically validated results.</p><div className="grid gap-6 xl:grid-cols-2"><Comparison kind="headline" /><Comparison kind="cta" /></div></Section>}
+    {active === 'Saved Assets' && <Section title="Saved Marketing Assets"><SavedAssets /></Section>}
     </div>
-  );
+  </main><div className="mt-12"><Footer /></div></div>;
 }
