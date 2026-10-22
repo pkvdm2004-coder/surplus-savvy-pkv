@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { RotateCcw, Check, Download } from 'lucide-react';
+import { RotateCcw, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { comparisonDefaults } from '@/lib/marketing/content';
-import { downloadText } from '@/lib/marketing/export';
 import { ContentActions } from './content-actions';
 export function Comparison({ kind }: { kind: 'headline' | 'cta' }) {
   const defaults = comparisonDefaults[kind];

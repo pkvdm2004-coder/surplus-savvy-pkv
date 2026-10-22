@@ -49,7 +49,7 @@ export const videoScripts: VideoScript[] = [
   ], cta: 'Explore AURA → /product; View Pricing → /pricing' },
 ];
 export type CampaignDay = { day: number; platform: string; type: string; objective: string; plannedContent: string; assetId: string; status: 'Planned' };
-const sequence = [
+const sequence: [string, string, string, string, string][] = [
   ['Instagram', 'Social post', 'Brand Awareness', 'Introducing AURA', 'post-1'],
   ['LinkedIn', 'Social post', 'Brand Awareness', 'The Problem of Restaurant Food Waste', 'post-2'],
   ['Instagram Reels', 'Video', 'Brand Awareness', 'The Food Waste Problem', 'video-1'],
