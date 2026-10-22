@@ -80,6 +80,8 @@
   --aura-cream: oklch(0.964 0.008 90.000);
   --aura-ink: oklch(0.148 0.026 10.710);
   --aura-earth: oklch(0.720 0.060 80.000);
+  --home-image-wash: linear-gradient(90deg, var(--aura-cream) 0%, color-mix(in oklab, var(--aura-cream) 97%, transparent) 33%, color-mix(in oklab, var(--aura-cream) 85%, transparent) 48%, transparent 78%);
+  --sustainability-wash: linear-gradient(90deg, var(--aura-deep) 0%, color-mix(in oklab, var(--aura-deep) 94%, transparent) 43%, color-mix(in oklab, var(--aura-deep) 25%, transparent) 100%);
 
   --background: var(--aura-cream);
   --foreground: var(--aura-ink);
@@ -165,4 +167,11 @@
     font-family: var(--font-display);
     font-weight: 700;
   }
+}
+
+.home-image-wash { background: var(--home-image-wash); }
+.sustainability-wash { background: var(--sustainability-wash); }
+@media (max-width: 767px) {
+  .home-image-wash { background: color-mix(in oklab, var(--aura-cream) 93%, transparent); }
+  .sustainability-wash { background: color-mix(in oklab, var(--aura-deep) 94%, transparent); }
 }

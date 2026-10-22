@@ -32,7 +32,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-6 xl:flex">
           {navLinks.map((link) => (
             <li key={link.to}>
               <Link
@@ -47,25 +47,28 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden md:block">
+        <div className="hidden xl:block">
           <Button asChild size="sm">
             <Link to="/pricing">Get started</Link>
           </Button>
         </div>
 
         {/* Mobile menu toggle */}
-        <button
-          className="inline-flex items-center justify-center md:hidden"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="xl:hidden"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
+          aria-expanded={open}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        </Button>
       </nav>
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-border bg-background px-4 py-4 md:hidden">
+        <div className="border-t border-border bg-background px-4 py-4 xl:hidden">
           <ul className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <li key={link.to}>
