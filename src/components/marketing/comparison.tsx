@@ -21,6 +21,6 @@ export function Comparison({ kind }: { kind: 'headline' | 'cta' }) {
     </div>)}</div>
     <p role="status" className="my-4 text-sm text-primary">{preferred === null ? 'No preference selected.' : `Your preference: Variant ${preferred === 0 ? 'A' : 'B'}. Not a measured winner.`}</p>
     <Label htmlFor={`${kind}-observations`}>Observations</Label><Textarea id={`${kind}-observations`} className="mt-2" value={observations} onChange={e => setObservations(e.target.value)} placeholder="Record your reasoning…" />
-    <div className="mt-4"><ContentActions text={report} filename={`aura-${kind}-comparison.txt`} save /></div>
+    <div className="mt-4"><ContentActions text={report} filename={`aura-${kind}-comparison.txt`} /></div>
   </article>;
 }
