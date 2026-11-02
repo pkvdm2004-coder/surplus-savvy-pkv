@@ -1,4 +1,6 @@
 # Module 5
+- [ ] Connect completed chat sessions and single linked feedback to existing external tables.
+- [ ] Verify real session insert/returned ID and feedback, plus failure and reset behavior.
 - [x] Build public Chat navigation and three-question guided intake.
 - [x] Add personalized rules, guardrails, human checkpoint, reset and local feedback placeholder.
 - [x] Verify rules and desktop/mobile conversation flow: 15 tests passed; all three recommendation paths, Other, guardrail, feedback, reset and mobile navigation passed; build OK.
