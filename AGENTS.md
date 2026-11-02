@@ -11,4 +11,4 @@
 
 - Keep marketing content in typed, browser-safe data objects shared by the homepage, library and export formatters; this prevents copy and exported materials from drifting apart.
 - Marketing interactions remain client-only and do not access existing database integrations; persistence will be explicitly integrated in a separate task.
-- Keep guided chat rules in a browser-safe pure module and conversation/feedback state in the chat page only; this makes recommendations testable without external services or persistence.
+- Keep guided chat rules and recommendation formatting browser-safe, with external chat storage behind server functions using the existing external client; this separates testable guidance from persistence and keeps credentials server-only.

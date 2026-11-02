@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowUp, Check, Leaf, RotateCcw, ShieldCheck, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Navbar } from '@/components/shared/navbar';
@@ -6,6 +7,8 @@ import { Footer } from '@/components/shared/footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { guardrailFor, intakeQuestions, recommend } from '@/lib/chat/intake';
+import { adviceBoundary, humanCheckpoint, recommendationIntro, formatRecommendation } from '@/lib/chat/recommendation';
+import { saveChatSession, saveChatFeedback } from '@/lib/chat-storage.functions';
 
 export const Route = createFileRoute('/chat')({
   component: Chat,
@@ -29,6 +32,16 @@ function Chat() {
   const [draft, setDraft] = useState('');
   const [guardrail, setGuardrail] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [savingSession, setSavingSession] = useState(false);
+  const [sessionError, setSessionError] = useState<string | null>(null);
+  const [savingFeedback, setSavingFeedback] = useState(false);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
+  const conversation = useRef(0);
+  const sessionRequested = useRef(false);
+  const feedbackRequested = useRef(false);
+  const persistSession = useServerFn(saveChatSession);
+  const persistFeedback = useServerFn(saveChatFeedback);
   const latest = useRef<HTMLDivElement>(null);
   const started = useRef(false);
   const question = intakeQuestions[answers.length];
@@ -45,13 +58,49 @@ function Chat() {
     started.current = true;
     const blocked = guardrailFor(clean);
     if (blocked) { setGuardrail(blocked); return; }
-    setAnswers(previous => [...previous, clean]);
+    const next = [...answers, clean];
+    setAnswers(next);
+    if (next.length === 3 && !sessionRequested.current && next[0] !== undefined && next[1] !== undefined && next[2] !== undefined) {
+      sessionRequested.current = true;
+      const generation = conversation.current;
+      const recommendation = formatRecommendation(recommend([next[0], next[1], next[2]]));
+      setSavingSession(true);
+      void persistSession({ data: { restaurant_type: next[0], inventory_challenge: next[1], improvement_goal: next[2], recommendation } })
+        .then(saved => {
+          if (conversation.current !== generation) return;
+          setSessionId(saved.sessionId); setSessionError(saved.error);
+        })
+        .catch(() => {
+          if (conversation.current === generation) setSessionError('Could not confirm the conversation save. Your recommendation is still available; feedback cannot be linked.');
+        })
+        .finally(() => { if (conversation.current === generation) setSavingSession(false); });
+    }
     setOther(false); setDraft(''); setGuardrail(null);
   }
 
   function reset() {
+    conversation.current += 1;
+    sessionRequested.current = false; feedbackRequested.current = false;
     started.current = false;
     setAnswers([]); setOther(false); setDraft(''); setGuardrail(null); setFeedback(null);
+    setSessionId(null); setSessionError(null); setSavingSession(false); setFeedbackError(null); setSavingFeedback(false);
+  }
+
+  async function submitFeedback(rating: 'up' | 'down') {
+    if (!sessionId || feedbackRequested.current || feedback) return;
+    feedbackRequested.current = true;
+    const generation = conversation.current;
+    setSavingFeedback(true); setFeedbackError(null);
+    try {
+      const saved = await persistFeedback({ data: { session_id: sessionId, rating } });
+      if (conversation.current !== generation) return;
+      if (saved.ok) setFeedback(rating);
+      else setFeedbackError(saved.error);
+    } catch {
+      if (conversation.current === generation) setFeedbackError('Could not confirm your feedback save. Further submissions are disabled for this conversation to avoid duplicates.');
+    } finally {
+      if (conversation.current === generation) setSavingFeedback(false);
+    }
   }
 
   function submit(event: FormEvent) { event.preventDefault(); answer(draft); }
@@ -62,16 +111,21 @@ function Chat() {
       <Button variant="outline" onClick={reset}><RotateCcw />Start New Conversation</Button>
     </header>
     <div role="log" aria-label="Guided conversation" aria-live="polite" className="space-y-5">
-      <AssistantMessage><p className="font-semibold text-primary">Welcome to AURA Smart Assistant.</p><p className="mt-2">I’m a guided assistant for restaurant owners and managers. Tell me about your restaurant in three questions, and I’ll suggest a practical starting point for your team.</p><p className="mt-2 text-muted-foreground">Rule-based guidance, not a live AI chat. Conversations are not saved.</p></AssistantMessage>
+      <AssistantMessage><p className="font-semibold text-primary">Welcome to AURA Smart Assistant.</p><p className="mt-2">I’m a guided assistant for restaurant owners and managers. Tell me about your restaurant in three questions, and I’ll suggest a practical starting point for your team.</p><p className="mt-2 text-muted-foreground">Rule-based guidance, not a live AI chat. Completed answers and recommendations are sent to AURA’s conversation storage.</p></AssistantMessage>
       {answers.map((selection, index) => <div key={index} className="space-y-4"><AssistantMessage><p>{intakeQuestions[index]?.text}</p></AssistantMessage><div className="ml-12 flex justify-end"><p className="max-w-full break-words rounded-lg bg-primary px-4 py-3 text-sm text-primary-foreground">{selection}</p></div></div>)}
       <div ref={latest} className="space-y-4">
         {question && <AssistantMessage><p className="mb-2 text-xs font-medium text-muted-foreground">Question {answers.length + 1} of 3</p><p className="font-semibold">{question.text}</p><div className="mt-4 grid gap-2 sm:grid-cols-2">{question.options.map(option => <Button key={option} variant="outline" className="h-auto min-h-11 justify-start whitespace-normal py-3 text-left" onClick={() => { if (option === 'Other') { setOther(true); setGuardrail(null); } else answer(option); }} aria-pressed={option === 'Other' && other}>{option}</Button>)}</div>
           {other && <form onSubmit={submit} className="mt-4"><label htmlFor="other-answer" className="mb-2 block text-sm">Your answer</label><div className="flex gap-2"><Input id="other-answer" value={draft} maxLength={240} onChange={e => setDraft(e.target.value)} autoFocus placeholder="Describe your restaurant or priority" /><Button type="submit" size="icon" disabled={!draft.trim()} aria-label="Send answer" title="Send answer"><ArrowUp /></Button></div></form>}
         </AssistantMessage>}
         {guardrail && <div role="alert"><AssistantMessage><div className="flex gap-2"><ShieldCheck className="mt-1 h-4 w-4 shrink-0 text-primary" /><p>{guardrail}</p></div></AssistantMessage></div>}
-        {result && <AssistantMessage><p className="text-xs font-medium uppercase text-primary">Your starting point</p><h2 className="mt-2 text-xl">{result.focus}</h2><p className="mt-3">Based on your restaurant type, challenge, and first priority, consider these steps:</p><ol className="mt-4 space-y-3">{result.actions.map((action, index) => <li key={action} className="flex gap-3"><span className="font-semibold text-primary">{index + 1}.</span><span>{action}</span></li>)}</ol>
-          <div className="mt-6 border-t border-border pt-4"><p className="flex items-start gap-2 font-medium text-primary"><ShieldCheck className="mt-1 h-5 w-5 shrink-0" />Please review these recommendations with your manager or operations team before making changes.</p><p className="mt-3 text-muted-foreground">General guidance only—not medical, legal, or financial advice. AURA will not change inventory or place orders.</p></div>
-          <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4"><span className="text-sm">Was this helpful?</span><Button variant={feedback === 'up' ? 'secondary' : 'ghost'} size="icon" onClick={() => setFeedback(feedback === 'up' ? null : 'up')} aria-label="Helpful" aria-pressed={feedback === 'up'} title="Helpful"><ThumbsUp /></Button><Button variant={feedback === 'down' ? 'secondary' : 'ghost'} size="icon" onClick={() => setFeedback(feedback === 'down' ? null : 'down')} aria-label="Not helpful" aria-pressed={feedback === 'down'} title="Not helpful"><ThumbsDown /></Button><span className="flex items-center gap-1 text-xs text-muted-foreground">{feedback && <Check className="h-3 w-3" />}Feedback preview only · not saved</span></div>
+        {result && <AssistantMessage><p className="text-xs font-medium uppercase text-primary">Your starting point</p><h2 className="mt-2 text-xl">{result.focus}</h2><p className="mt-3">{recommendationIntro}</p><ol className="mt-4 space-y-3">{result.actions.map((action, index) => <li key={action} className="flex gap-3"><span className="font-semibold text-primary">{index + 1}.</span><span>{action}</span></li>)}</ol>
+          <div className="mt-6 border-t border-border pt-4"><p className="flex items-start gap-2 font-medium text-primary"><ShieldCheck className="mt-1 h-5 w-5 shrink-0" />{humanCheckpoint}</p><p className="mt-3 text-muted-foreground">{adviceBoundary}</p></div>
+          <div className="mt-5 border-t border-border pt-4">
+            <div role="status" className="text-sm text-muted-foreground">{savingSession ? 'Saving conversation…' : sessionId ? <span className="flex items-center gap-2 text-primary"><Check className="h-4 w-4" />Conversation saved.</span> : null}</div>
+            {sessionError && <p role="alert" className="mt-2 text-sm text-destructive">{sessionError}</p>}
+            <div className="mt-3 flex flex-wrap items-center gap-3"><span className="text-sm">Was this helpful?</span><Button variant={feedback === 'up' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || feedbackRequested.current} onClick={() => void submitFeedback('up')} aria-label="Helpful" aria-pressed={feedback === 'up'} title="Helpful"><ThumbsUp /></Button><Button variant={feedback === 'down' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || feedbackRequested.current} onClick={() => void submitFeedback('down')} aria-label="Not helpful" aria-pressed={feedback === 'down'} title="Not helpful"><ThumbsDown /></Button><span role="status" className="flex items-center gap-1 text-xs text-muted-foreground">{savingFeedback ? 'Saving feedback…' : feedback ? <><Check className="h-3 w-3" />Feedback saved. Thank you.</> : !sessionId ? 'Feedback requires a confirmed conversation.' : 'One feedback submission per conversation.'}</span></div>
+            {feedbackError && <p role="alert" className="mt-2 text-sm text-destructive">{feedbackError} Further submissions are disabled for this conversation to avoid duplicates.</p>}
+          </div>
         </AssistantMessage>}
       </div>
     </div>
