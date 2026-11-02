@@ -9,6 +9,7 @@ const navLinks = [
   { to: "/product", label: "Product" },
   { to: "/pricing", label: "Pricing" },
   { to: "/marketing", label: "Marketing" },
+  { to: "/chat", label: "Chat" },
   { to: "/docs", label: "Docs" },
   { to: "/inventory", label: "Inventory" },
   { to: "/predictions", label: "Predictions" },
@@ -32,7 +33,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden items-center gap-6 xl:flex">
+        <ul className="hidden items-center gap-4 xl:flex">
           {navLinks.map((link) => (
             <li key={link.to}>
               <Link
