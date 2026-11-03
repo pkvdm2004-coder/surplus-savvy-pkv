@@ -52,6 +52,26 @@ function Chat() {
     if (started.current) latest.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
   }, [answers.length, guardrail]);
 
+  function saveSession(next: string[]) {
+    if (next[0] === undefined || next[1] === undefined || next[2] === undefined) return;
+    sessionRequested.current = true;
+    const generation = conversation.current;
+    const recommendation = formatRecommendation(recommend([next[0], next[1], next[2]]));
+    setSavingSession(true); setSessionError(null);
+    void persistSession({ data: { restaurant_type: next[0], inventory_challenge: next[1], improvement_goal: next[2], recommendation } })
+      .then(saved => {
+        if (conversation.current !== generation) return;
+        setSessionId(saved.sessionId); setSessionError(saved.error);
+        if (!saved.sessionId) sessionRequested.current = false;
+      })
+      .catch(() => {
+        if (conversation.current !== generation) return;
+        sessionRequested.current = false;
+        setSessionError('Could not confirm the conversation save. Your recommendation is still available.');
+      })
+      .finally(() => { if (conversation.current === generation) setSavingSession(false); });
+  }
+
   function answer(value: string) {
     const clean = value.trim();
     if (!clean || !question) return;
@@ -60,21 +80,7 @@ function Chat() {
     if (blocked) { setGuardrail(blocked); return; }
     const next = [...answers, clean];
     setAnswers(next);
-    if (next.length === 3 && !sessionRequested.current && next[0] !== undefined && next[1] !== undefined && next[2] !== undefined) {
-      sessionRequested.current = true;
-      const generation = conversation.current;
-      const recommendation = formatRecommendation(recommend([next[0], next[1], next[2]]));
-      setSavingSession(true);
-      void persistSession({ data: { restaurant_type: next[0], inventory_challenge: next[1], improvement_goal: next[2], recommendation } })
-        .then(saved => {
-          if (conversation.current !== generation) return;
-          setSessionId(saved.sessionId); setSessionError(saved.error);
-        })
-        .catch(() => {
-          if (conversation.current === generation) setSessionError('Could not confirm the conversation save. Your recommendation is still available; feedback cannot be linked.');
-        })
-        .finally(() => { if (conversation.current === generation) setSavingSession(false); });
-    }
+    if (next.length === 3 && !sessionRequested.current) saveSession(next);
     setOther(false); setDraft(''); setGuardrail(null);
   }
 
@@ -95,13 +101,14 @@ function Chat() {
       const saved = await persistFeedback({ data: { session_id: sessionId, rating } });
       if (conversation.current !== generation) return;
       if (saved.ok) setFeedback(rating);
-      else setFeedbackError(saved.error);
+      else { feedbackRequested.current = false; setFeedbackError(saved.error); }
     } catch {
-      if (conversation.current === generation) setFeedbackError('Could not confirm your feedback save. Further submissions are disabled for this conversation to avoid duplicates.');
+      if (conversation.current === generation) { feedbackRequested.current = false; setFeedbackError('Could not confirm your feedback save.'); }
     } finally {
       if (conversation.current === generation) setSavingFeedback(false);
     }
   }
+
 
   function submit(event: FormEvent) { event.preventDefault(); answer(draft); }
 
@@ -122,9 +129,9 @@ function Chat() {
           <div className="mt-6 border-t border-border pt-4"><p className="flex items-start gap-2 font-medium text-primary"><ShieldCheck className="mt-1 h-5 w-5 shrink-0" />{humanCheckpoint}</p><p className="mt-3 text-muted-foreground">{adviceBoundary}</p></div>
           <div className="mt-5 border-t border-border pt-4">
             <div role="status" className="text-sm text-muted-foreground">{savingSession ? 'Saving conversation…' : sessionId ? <span className="flex items-center gap-2 text-primary"><Check className="h-4 w-4" />Conversation saved.</span> : null}</div>
-            {sessionError && <p role="alert" className="mt-2 text-sm text-destructive">{sessionError}</p>}
-            <div className="mt-3 flex flex-wrap items-center gap-3"><span className="text-sm">Was this helpful?</span><Button variant={feedback === 'up' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || feedbackRequested.current} onClick={() => void submitFeedback('up')} aria-label="Helpful" aria-pressed={feedback === 'up'} title="Helpful"><ThumbsUp /></Button><Button variant={feedback === 'down' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || feedbackRequested.current} onClick={() => void submitFeedback('down')} aria-label="Not helpful" aria-pressed={feedback === 'down'} title="Not helpful"><ThumbsDown /></Button><span role="status" className="flex items-center gap-1 text-xs text-muted-foreground">{savingFeedback ? 'Saving feedback…' : feedback ? <><Check className="h-3 w-3" />Feedback saved. Thank you.</> : !sessionId ? 'Feedback requires a confirmed conversation.' : 'One feedback submission per conversation.'}</span></div>
-            {feedbackError && <p role="alert" className="mt-2 text-sm text-destructive">{feedbackError} Further submissions are disabled for this conversation to avoid duplicates.</p>}
+            {sessionError && <div role="alert" className="mt-2 flex flex-wrap items-center gap-3 text-sm text-destructive"><p>{sessionError}</p>{!sessionId && !savingSession && <Button variant="outline" size="sm" onClick={() => saveSession(answers)}>Retry save</Button>}</div>}
+            <div className="mt-3 flex flex-wrap items-center gap-3"><span className="text-sm">Was this helpful?</span><Button variant={feedback === 'up' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || !!feedback} onClick={() => void submitFeedback('up')} aria-label="Helpful" aria-pressed={feedback === 'up'} title="Helpful"><ThumbsUp /></Button><Button variant={feedback === 'down' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || !!feedback} onClick={() => void submitFeedback('down')} aria-label="Not helpful" aria-pressed={feedback === 'down'} title="Not helpful"><ThumbsDown /></Button><span role="status" className="flex items-center gap-1 text-xs text-muted-foreground">{savingFeedback ? 'Saving feedback…' : feedback ? <><Check className="h-3 w-3" />Feedback saved. Thank you.</> : !sessionId ? 'Feedback requires a confirmed conversation.' : 'One feedback submission per conversation.'}</span></div>
+            {feedbackError && <p role="alert" className="mt-2 text-sm text-destructive">{feedbackError} You can try again.</p>}
           </div>
         </AssistantMessage>}
       </div>
