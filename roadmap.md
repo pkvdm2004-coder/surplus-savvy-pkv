@@ -1,6 +1,7 @@
 # Module 5
-- [ ] Connect completed chat sessions and single linked feedback to existing external tables.
-- [ ] Verify real session insert/returned ID and feedback, plus failure and reset behavior.
+- [x] Connect completed chat sessions and single linked feedback to existing external tables; no schema or policy changes.
+- [x] Verify failure and reset behavior; 20 tests passed, build OK, actual external request returned database permission error 42501; recommendation remains usable with no false success.
+- [ ] Verify successful real session insert/returned ID and linked feedback — blocked by existing external chat_sessions permissions (42501); feedback cannot be submitted without a returned session ID.
 - [x] Build public Chat navigation and three-question guided intake.
 - [x] Add personalized rules, guardrails, human checkpoint, reset and local feedback placeholder.
 - [x] Verify rules and desktop/mobile conversation flow: 15 tests passed; all three recommendation paths, Other, guardrail, feedback, reset and mobile navigation passed; build OK.
