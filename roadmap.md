@@ -1,4 +1,5 @@
 # Module 5
+- [ ] Strengthen safety screening and add acknowledgment before feedback; verify rules and real chat flow.
 - [x] Connect completed chat sessions and single linked feedback to existing external tables; no schema or policy changes.
 - [x] Verify failure and reset behavior; 20 tests passed, build OK, actual external request returned database permission error 42501; recommendation remains usable with no false success.
 - [ ] Verify successful real session insert/returned ID and linked feedback — blocked by existing external chat_sessions permissions (42501); feedback cannot be submitted without a returned session ID.

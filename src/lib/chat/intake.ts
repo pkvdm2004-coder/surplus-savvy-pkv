@@ -8,13 +8,23 @@ export type IntakeAnswers = [string, string, string];
 
 // A basic screening rule, not a comprehensive safety classifier.
 export function guardrailFor(text: string): string | null {
-  if (/\b(medic\w*|diagnos\w*|allerg\w*|treat\w*|poison\w*|legal|lawyer|lawsuit|tax\w*|financial|invest\w*|loan\w*|profit forecast|unsafe|illegal|fraud|harm|weapon\w*)\b/i.test(text)) {
-    return 'I can offer general restaurant inventory, food-waste, and operations guidance, but not medical, legal, or financial advice or unsafe instructions. Please consult an appropriate qualified professional.';
+  const clean = text.normalize('NFKC').replace(/[’‘]/g, "'").replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (/\b(food\s*safety|safe\s+to\s+(eat|serve|use)|is\s+.{0,40}\s+safe|temperature|undercook\w*|raw\s+(chicken|meat|fish|poultry)|contaminat\w*|spoiled|rotten|mold\w*|expired\s+(food|chicken|meat|fish|milk|ingredients?)|salmonella|e\.?\s*coli|botulis\w*)\b/i.test(clean)
+    || /\b(serve|eat|use|sell|cook|reheat)\b.{0,70}\b(expired|spoiled|rotten|past\s+(its\s+|the\s+)?(expiration|expiry|use\s+by)|left\s+out|overnight)\b/i.test(clean)
+    || /\b(ignore|bypass|disregard|override|extend|change|hide)\b.{0,60}\b(expir\w*|use\s+by|safety|regulations?|inspection\w*)\b/i.test(clean)) {
+    return 'I only provide general restaurant-management guidance, not food-safety judgments. Never serve unsafe food, ignore expiration dates, or bypass food-safety regulations. Please consult a qualified food-safety professional before deciding whether food is safe to use or serve.';
   }
-  if (/\b(automatic\w*|place\w*\s+(an?\s+)?orders?|order\s+(food|ingredients|supplies)|change\s+(my\s+)?inventory|delete\s+(my\s+)?inventory)\b/i.test(text)) {
+  if (/\b(medic\w*|diagnos\w*|allerg\w*|treat\w*|poison\w*|legal|lawyer|lawsuit|tax\w*|financial|invest\w*|loan\w*|profit forecast|accounting|liability|contract|health advice)\b/i.test(clean)) {
+    return 'I only provide general restaurant-management guidance for inventory, food-waste reduction, and operational efficiency, not medical, legal, or financial judgments. Please consult a qualified professional for those questions.';
+  }
+  if (/\b(unsafe|illegal|fraud|harm|weapon\w*)\b/i.test(clean)) {
+    return 'I cannot help with unsafe or harmful instructions. I can offer general restaurant-management guidance for inventory, food-waste reduction, and operational efficiency.';
+  }
+  if (/\b(automatic\w*|place\w*\s+(an?\s+)?orders?|order\s+(food|ingredients|supplies)|change\s+(my\s+)?inventory|delete\s+(my\s+)?inventory)\b/i.test(clean)) {
     return 'I cannot change inventory or place orders. Your manager or operations team must review and carry out any decisions manually.';
   }
-  if (/\b(weather|politics|sports|homework|write\s+(code|an?\s+essay)|ignore\s+(the\s+)?(rules|instructions))\b/i.test(text)) {
+  if (/\b(weather|politics|sports|homework|write\s+(code|an?\s+essay)|ignore\s+(the\s+)?(rules|instructions))\b/i.test(clean)
+    || (/\?|^(who|what|where|when|why|how|can|could|should|tell|explain)\b/i.test(clean) && !/\b(restaurant|café|cafe|bakery|catering|buffet|inventory|stock|ingredients?|food|waste|prep\w*|purchas\w*|operations?|efficien\w*|staff|shift|menu|sales|service|expir\w*)\b/i.test(clean))) {
     return 'That request is outside this guided assistant. Please choose an option or describe your restaurant type, inventory challenge, or operational priority.';
   }
   return null;
