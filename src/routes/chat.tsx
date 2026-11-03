@@ -52,6 +52,26 @@ function Chat() {
     if (started.current) latest.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
   }, [answers.length, guardrail]);
 
+  function saveSession(next: string[]) {
+    if (next[0] === undefined || next[1] === undefined || next[2] === undefined) return;
+    sessionRequested.current = true;
+    const generation = conversation.current;
+    const recommendation = formatRecommendation(recommend([next[0], next[1], next[2]]));
+    setSavingSession(true); setSessionError(null);
+    void persistSession({ data: { restaurant_type: next[0], inventory_challenge: next[1], improvement_goal: next[2], recommendation } })
+      .then(saved => {
+        if (conversation.current !== generation) return;
+        setSessionId(saved.sessionId); setSessionError(saved.error);
+        if (!saved.sessionId) sessionRequested.current = false;
+      })
+      .catch(() => {
+        if (conversation.current !== generation) return;
+        sessionRequested.current = false;
+        setSessionError('Could not confirm the conversation save. Your recommendation is still available.');
+      })
+      .finally(() => { if (conversation.current === generation) setSavingSession(false); });
+  }
+
   function answer(value: string) {
     const clean = value.trim();
     if (!clean || !question) return;
@@ -60,21 +80,7 @@ function Chat() {
     if (blocked) { setGuardrail(blocked); return; }
     const next = [...answers, clean];
     setAnswers(next);
-    if (next.length === 3 && !sessionRequested.current && next[0] !== undefined && next[1] !== undefined && next[2] !== undefined) {
-      sessionRequested.current = true;
-      const generation = conversation.current;
-      const recommendation = formatRecommendation(recommend([next[0], next[1], next[2]]));
-      setSavingSession(true);
-      void persistSession({ data: { restaurant_type: next[0], inventory_challenge: next[1], improvement_goal: next[2], recommendation } })
-        .then(saved => {
-          if (conversation.current !== generation) return;
-          setSessionId(saved.sessionId); setSessionError(saved.error);
-        })
-        .catch(() => {
-          if (conversation.current === generation) setSessionError('Could not confirm the conversation save. Your recommendation is still available; feedback cannot be linked.');
-        })
-        .finally(() => { if (conversation.current === generation) setSavingSession(false); });
-    }
+    if (next.length === 3 && !sessionRequested.current) saveSession(next);
     setOther(false); setDraft(''); setGuardrail(null);
   }
 
@@ -95,13 +101,14 @@ function Chat() {
       const saved = await persistFeedback({ data: { session_id: sessionId, rating } });
       if (conversation.current !== generation) return;
       if (saved.ok) setFeedback(rating);
-      else setFeedbackError(saved.error);
+      else { feedbackRequested.current = false; setFeedbackError(saved.error); }
     } catch {
-      if (conversation.current === generation) setFeedbackError('Could not confirm your feedback save. Further submissions are disabled for this conversation to avoid duplicates.');
+      if (conversation.current === generation) { feedbackRequested.current = false; setFeedbackError('Could not confirm your feedback save.'); }
     } finally {
       if (conversation.current === generation) setSavingFeedback(false);
     }
   }
+
 
   function submit(event: FormEvent) { event.preventDefault(); answer(draft); }
 
