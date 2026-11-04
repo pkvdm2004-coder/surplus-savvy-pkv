@@ -1,4 +1,6 @@
 # Module 5
+- [ ] Final focused UX pass: clearer intake progress, recommendation/review/feedback separation and mobile touch targets.
+- [ ] Execute real intake, safety/acknowledgment, external session/feedback, reset/duplicate/failure and previous-page regression checks; report publication readiness and verification limits.
 - [x] Strengthen safety screening and add acknowledgment before feedback; 56 tests passed; browser verified unsafe/professional/unsupported responses, immediate recommendation access, checkbox gating, duplicate feedback prevention and reset; no page errors; build OK.
 - [x] Connect completed chat sessions and single linked feedback to existing external tables; no schema or policy changes.
 - [x] Verify failure and reset behavior; 20 tests passed, build OK, actual external request returned database permission error 42501; recommendation remains usable with no false success.
