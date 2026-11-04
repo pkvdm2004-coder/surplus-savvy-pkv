@@ -9,7 +9,8 @@ export type IntakeAnswers = [string, string, string];
 // A basic screening rule, not a comprehensive safety classifier.
 export function guardrailFor(text: string): string | null {
   const clean = text.normalize('NFKC').replace(/[’‘]/g, "'").replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
-  if (/\b(food\s*safety|safe\s+to\s+(eat|serve|use)|is\s+.{0,40}\s+safe|temperature|undercook\w*|raw\s+(chicken|meat|fish|poultry)|contaminat\w*|spoiled|rotten|mold\w*|expired\s+(food|chicken|meat|fish|milk|ingredients?)|salmonella|e\.?\s*coli|botulis\w*)\b/i.test(clean)
+  if (/\b(food\s*safety|safe\s+to\s+(eat|serve|use)|is\s+.{0,40}\s+safe|temperature|undercook\w*|refreez\w*|thaw\w*|cross\s+contact|nut\s+free|dairy\s+free|raw\s+(chicken|meat|fish|poultry)|contaminat\w*|spoiled|rotten|mold\w*|expired\s+(food|chicken|meat|fish|milk|ingredients?)|salmonella|e\.?\s*coli|botulis\w*)\b/i.test(clean)
+    || /\b(cool|reheat|hold|sit|sat|left)\b.{0,60}\b(soup|rice|cooked|food|counter|buffet|out|overnight)\b/i.test(clean)
     || /\b(serve|eat|use|sell|cook|reheat)\b.{0,70}\b(expired|spoiled|rotten|past\s+(its\s+|the\s+)?(expiration|expiry|use\s+by)|left\s+out|overnight)\b/i.test(clean)
     || /\b(ignore|bypass|disregard|override|extend|change|hide)\b.{0,60}\b(expir\w*|use\s+by|safety|regulations?|inspection\w*)\b/i.test(clean)) {
     return 'I only provide general restaurant-management guidance, not food-safety judgments. Never serve unsafe food, ignore expiration dates, or bypass food-safety regulations. Please consult a qualified food-safety professional before deciding whether food is safe to use or serve.';

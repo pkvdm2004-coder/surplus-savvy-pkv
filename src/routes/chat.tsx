@@ -6,8 +6,9 @@ import { Navbar } from '@/components/shared/navbar';
 import { Footer } from '@/components/shared/footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { guardrailFor, intakeQuestions, recommend } from '@/lib/chat/intake';
-import { adviceBoundary, humanCheckpoint, recommendationIntro, formatRecommendation } from '@/lib/chat/recommendation';
+import { adviceBoundary, humanCheckpoint, recommendationIntro, formatRecommendation, canSubmitFeedback } from '@/lib/chat/recommendation';
 import { saveChatSession, saveChatFeedback } from '@/lib/chat-storage.functions';
 
 export const Route = createFileRoute('/chat')({
@@ -32,6 +33,7 @@ function Chat() {
   const [draft, setDraft] = useState('');
   const [guardrail, setGuardrail] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [acknowledged, setAcknowledged] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [savingSession, setSavingSession] = useState(false);
   const [sessionError, setSessionError] = useState<string | null>(null);
@@ -47,6 +49,7 @@ function Chat() {
   const question = intakeQuestions[answers.length];
   const result = answers.length === 3 && answers[0] !== undefined && answers[1] !== undefined && answers[2] !== undefined
     ? recommend([answers[0], answers[1], answers[2]]) : null;
+  const feedbackAllowed = canSubmitFeedback(acknowledged, sessionId, savingFeedback, feedback);
 
   useEffect(() => {
     if (started.current) latest.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
@@ -89,11 +92,12 @@ function Chat() {
     sessionRequested.current = false; feedbackRequested.current = false;
     started.current = false;
     setAnswers([]); setOther(false); setDraft(''); setGuardrail(null); setFeedback(null);
+    setAcknowledged(false);
     setSessionId(null); setSessionError(null); setSavingSession(false); setFeedbackError(null); setSavingFeedback(false);
   }
 
   async function submitFeedback(rating: 'up' | 'down') {
-    if (!sessionId || feedbackRequested.current || feedback) return;
+    if (!sessionId || !canSubmitFeedback(acknowledged, sessionId, feedbackRequested.current, feedback)) return;
     feedbackRequested.current = true;
     const generation = conversation.current;
     setSavingFeedback(true); setFeedbackError(null);
@@ -126,11 +130,11 @@ function Chat() {
         </AssistantMessage>}
         {guardrail && <div role="alert"><AssistantMessage><div className="flex gap-2"><ShieldCheck className="mt-1 h-4 w-4 shrink-0 text-primary" /><p>{guardrail}</p></div></AssistantMessage></div>}
         {result && <AssistantMessage><p className="text-xs font-medium uppercase text-primary">Your starting point</p><h2 className="mt-2 text-xl">{result.focus}</h2><p className="mt-3">{recommendationIntro}</p><ol className="mt-4 space-y-3">{result.actions.map((action, index) => <li key={action} className="flex gap-3"><span className="font-semibold text-primary">{index + 1}.</span><span>{action}</span></li>)}</ol>
-          <div className="mt-6 border-t border-border pt-4"><p className="flex items-start gap-2 font-medium text-primary"><ShieldCheck className="mt-1 h-5 w-5 shrink-0" />{humanCheckpoint}</p><p className="mt-3 text-muted-foreground">{adviceBoundary}</p></div>
+          <div className="mt-6 border-t border-border pt-4"><p className="flex items-start gap-2 font-medium text-primary"><ShieldCheck className="mt-1 h-5 w-5 shrink-0" />{humanCheckpoint}</p><p className="mt-3 text-muted-foreground">{adviceBoundary}</p><div className="mt-4 flex items-start gap-3"><Checkbox id="human-review" className="mt-1 shrink-0" checked={acknowledged} onCheckedChange={value => setAcknowledged(value === true)} disabled={savingFeedback || !!feedback} /><label htmlFor="human-review" className="cursor-pointer text-sm leading-relaxed">I understand that these recommendations require human review.</label></div></div>
           <div className="mt-5 border-t border-border pt-4">
             <div role="status" className="text-sm text-muted-foreground">{savingSession ? 'Saving conversation…' : sessionId ? <span className="flex items-center gap-2 text-primary"><Check className="h-4 w-4" />Conversation saved.</span> : null}</div>
             {sessionError && <div role="alert" className="mt-2 flex flex-wrap items-center gap-3 text-sm text-destructive"><p>{sessionError}</p>{!sessionId && !savingSession && <Button variant="outline" size="sm" onClick={() => saveSession(answers)}>Retry save</Button>}</div>}
-            <div className="mt-3 flex flex-wrap items-center gap-3"><span className="text-sm">Was this helpful?</span><Button variant={feedback === 'up' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || !!feedback} onClick={() => void submitFeedback('up')} aria-label="Helpful" aria-pressed={feedback === 'up'} title="Helpful"><ThumbsUp /></Button><Button variant={feedback === 'down' ? 'secondary' : 'ghost'} size="icon" disabled={!sessionId || savingFeedback || !!feedback} onClick={() => void submitFeedback('down')} aria-label="Not helpful" aria-pressed={feedback === 'down'} title="Not helpful"><ThumbsDown /></Button><span role="status" className="flex items-center gap-1 text-xs text-muted-foreground">{savingFeedback ? 'Saving feedback…' : feedback ? <><Check className="h-3 w-3" />Feedback saved. Thank you.</> : !sessionId ? 'Feedback requires a confirmed conversation.' : 'One feedback submission per conversation.'}</span></div>
+            <div className="mt-3 flex flex-wrap items-center gap-3"><span className="text-sm">Was this helpful?</span><Button variant={feedback === 'up' ? 'secondary' : 'ghost'} size="icon" disabled={!feedbackAllowed} onClick={() => void submitFeedback('up')} aria-label="Helpful" aria-pressed={feedback === 'up'} title="Helpful"><ThumbsUp /></Button><Button variant={feedback === 'down' ? 'secondary' : 'ghost'} size="icon" disabled={!feedbackAllowed} onClick={() => void submitFeedback('down')} aria-label="Not helpful" aria-pressed={feedback === 'down'} title="Not helpful"><ThumbsDown /></Button><span role="status" className="flex items-center gap-1 text-xs text-muted-foreground">{savingFeedback ? 'Saving feedback…' : feedback ? <><Check className="h-3 w-3" />Feedback saved. Thank you.</> : !acknowledged ? 'Acknowledge human review before submitting feedback.' : !sessionId ? 'Feedback requires a confirmed conversation.' : 'One feedback submission per conversation.'}</span></div>
             {feedbackError && <p role="alert" className="mt-2 text-sm text-destructive">{feedbackError} You can try again.</p>}
           </div>
         </AssistantMessage>}
