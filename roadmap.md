@@ -1,3 +1,8 @@
+# Module 6
+- [x] Integrated shared header/footer navigation including Dashboard, Demo, and every existing page; Demo remains a placeholder and Docs is unchanged.
+- [x] Added a read-only external dashboard with safe field projections, visible-record counts, five-row previews, refresh, and honest access/empty/loading/error states; no database or integration configuration changes.
+- [x] Verified real reads: 2 inventory records and 8 research entries; stored predictions, pricing scenarios, marketing assets, chat sessions, and chat feedback returned no visible rows, which cannot distinguish RLS filtering from empty tables. Executed 67 tests (5 dashboard, 62 existing), all passed; browser verified all 12 navigation destinations, real refresh, loading, simulated refresh failure/recovery, and desktop/mobile layouts; no page errors in normal navigation, build OK. Other modules' full write workflows and external RLS definitions were not retested; publication remains pending.
+
 # Module 5
 - [x] Final focused UX pass: added three-step progress, distinct recommendation/review/feedback headings and 44px feedback targets; preserved AURA styling and existing integrations.
 - [x] Final tests: 56 assistant tests and 6 marketing tests passed; browser verified three-question recommendation, guardrails, acknowledgment gating, one real external RPC session save plus linked thumbs-up insert, duplicate blocking, reset and simulated network-failure retry. Desktop/mobile screenshots inspected; nine other pages opened with unique metadata and no page errors; build OK. Direct database readback and exhaustive previous-module workflows not verified. Ready to republish this page; existing whole-site security findings were not reassessed.

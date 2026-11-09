@@ -12,3 +12,5 @@
 - Keep marketing content in typed, browser-safe data objects shared by the homepage, library and export formatters; this prevents copy and exported materials from drifting apart.
 - Marketing interactions remain client-only and do not access existing database integrations; persistence will be explicitly integrated in a separate task.
 - Keep guided chat rules and recommendation formatting browser-safe, with external chat storage behind server functions using the existing external client; this separates testable guidance from persistence and keeps credentials server-only.
+- Share typed navigation links between the header and footer so all existing and reserved pages remain reachable without menu drift.
+- Load dashboard data through a read-only server function using the existing external publishable client and explicit safe projections; return independent source states and never treat an empty RLS-filtered result as proof of zero stored records.

@@ -2,19 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-
-const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/how-it-works", label: "How it works" },
-  { to: "/product", label: "Product" },
-  { to: "/pricing", label: "Pricing" },
-  { to: "/marketing", label: "Marketing" },
-  { to: "/chat", label: "Chat" },
-  { to: "/docs", label: "Docs" },
-  { to: "/inventory", label: "Inventory" },
-  { to: "/predictions", label: "Predictions" },
-  { to: "/research", label: "Research" },
-];
+import { navigationLinks as navLinks } from "@/lib/navigation";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -27,13 +15,13 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-2xl font-bold tracking-tight text-aura-deep">
+          <span className="font-display text-2xl font-bold text-aura-deep">
             AURA
           </span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden items-center gap-4 xl:flex">
+        <ul className="hidden items-center gap-3 2xl:flex">
           {navLinks.map((link) => (
             <li key={link.to}>
               <Link
@@ -48,7 +36,7 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden xl:block">
+        <div className="hidden 2xl:block">
           <Button asChild size="sm">
             <Link to="/pricing">Get started</Link>
           </Button>
@@ -58,7 +46,7 @@ export function Navbar() {
         <Button
           variant="ghost"
           size="icon"
-          className="xl:hidden"
+          className="2xl:hidden"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
           aria-expanded={open}
@@ -69,7 +57,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-border bg-background px-4 py-4 xl:hidden">
+        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border bg-background px-4 py-4 2xl:hidden">
           <ul className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <li key={link.to}>
