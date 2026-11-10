@@ -13,5 +13,5 @@
 - Marketing interactions remain client-only and do not access existing database integrations; persistence will be explicitly integrated in a separate task.
 - Keep guided chat rules and recommendation formatting browser-safe, with external chat storage behind server functions using the existing external client; this separates testable guidance from persistence and keeps credentials server-only.
 - Share typed navigation links between the header and footer so all existing and reserved pages remain reachable without menu drift.
-- Load dashboard data through a read-only server function using the existing external publishable client and explicit safe projections; return independent source states and never treat an empty RLS-filtered result as proof of zero stored records.
+- Load dashboard previews for Inventory and Research through safe external read projections; use the existing get_dashboard_counts RPC for all other dashboard totals without reading their individual records, and never invent counts on failures or empty filtered reads.
 - Keep documentation history and verbatim prompts in browser-safe source data with explicit provenance and completion status; documentation is static and preserves the existing document-upload integration.

@@ -1,4 +1,5 @@
 # Module 6
+- [ ] Replace restricted dashboard reads with existing get_dashboard_counts RPC; preserve accessible previews, verify real counts, refresh and failures.
 - [x] Expanded Docs with overview, six-module timeline, 23 original prompts with provenance, architecture, sourced build logs, human decisions, status distinctions, and GitHub link; preserved document upload logic and Demo placeholder.
 - [x] Verified all 23 prompt texts exactly against original messages/uploads; browser checked every section, module count, prompt expansion, repository link, section jumps, Dashboard/Docs and mobile Demo navigation, desktop/mobile screenshots, upload chooser/list presence, and no horizontal overflow or page errors; build OK. No uploads/deletes performed. Formal Module 1/2 master briefs, original Vercel deployment prompt/record, and full Demo prompt are unavailable; Module 4 initial brief is partial with its supplied continuation included. Remote GitHub synchronization and Vercel deployment are not claimed as verified.
 - [x] Integrated shared header/footer navigation including Dashboard, Demo, and every existing page; Demo remains a placeholder and Docs is unchanged.

@@ -9,13 +9,26 @@ export const dashboardSources = [
 ] as const;
 
 export type DashboardTable = typeof dashboardSources[number]['table'];
+export function usesDashboardCount(table: DashboardTable) {
+  return table !== 'inventory' && table !== 'research_entries';
+}
 export type DashboardRow = Record<string, string | number | boolean | null>;
 export type DashboardResult = {
   table: DashboardTable;
-  state: 'available' | 'empty' | 'unavailable' | 'error';
+  state: 'available' | 'empty' | 'unavailable' | 'error' | 'counted';
   rows: DashboardRow[];
   count: number | null;
 };
+
+export function rpcDashboardResult(table: DashboardTable, rows: unknown, error: { code?: string } | null): DashboardResult {
+  if (error) return dashboardResult(table, null, null, error);
+  if (!Array.isArray(rows)) return dashboardResult(table, null, null, { code: 'INVALID_RESPONSE' });
+  const matches = rows.filter(row => row && typeof row === 'object' && row.table_name === table);
+  const value: unknown = matches.length === 1 ? matches[0].total_records : undefined;
+  const count = typeof value === 'number' ? value : typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : NaN;
+  if (!Number.isSafeInteger(count) || count < 0) return dashboardResult(table, null, null, { code: 'INVALID_COUNT' });
+  return { table, state: 'counted', rows: [], count };
+}
 
 export function dashboardResult(table: DashboardTable, rows: DashboardRow[] | null, count: number | null, error: { code?: string } | null): DashboardResult {
   if (error) return { table, state: error.code === '42501' ? 'unavailable' : 'error', rows: [], count: null };
