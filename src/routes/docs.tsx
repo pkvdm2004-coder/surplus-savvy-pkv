@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { UploadCloud, FileText, Trash2, Download, Loader2 } from "lucide-react";
+import { ProjectDocumentation } from "@/components/project-documentation";
 
 export const Route = createFileRoute("/docs")({
   component: Docs,
   head: () => ({
     meta: [
-      { title: "Docs — Upload Restaurant Documents | AURA Company" },
-      { name: "description", content: "Upload and manage your restaurant's menus, invoices, and prep sheets so AURA can turn them into surplus insights." },
-      { property: "og:title", content: "Docs — Upload Restaurant Documents | AURA Company" },
-      { property: "og:description", content: "Upload and manage your restaurant's menus, invoices, and prep sheets so AURA can turn them into surplus insights." },
+      { title: "Docs — Project History, Prompts & Architecture | AURA Company" },
+      { name: "description", content: "Explore AURA's module timeline, original coding prompts, architecture, documented milestones, and human decisions; manage existing document uploads." },
+      { property: "og:title", content: "Docs — Project History, Prompts & Architecture | AURA Company" },
+      { property: "og:description", content: "A source-grounded record of AURA's development, original prompts, completed features, limitations, and future plans." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -109,18 +110,22 @@ function Docs() {
       <Navbar />
 
       <main>
-        <section className="bg-aura-cream py-24">
-          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold leading-tight text-aura-ink sm:text-5xl">Docs</h1>
-            <p className="mt-6 text-lg text-muted-foreground">
-              Upload menus, invoices, prep sheets, and waste logs. Everything you share here feeds
-              the surplus estimates AURA builds for your kitchen.
+        <section className="bg-aura-cream py-12 sm:py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <p className="mb-3 text-sm font-semibold text-primary">AURA / Development record</p>
+            <h1 className="text-4xl font-bold leading-tight text-primary">Docs</h1>
+            <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
+              Project history, original prompts, architecture, and the human decisions behind AURA.
             </p>
           </div>
         </section>
 
-        <section className="py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <ProjectDocumentation />
+
+        <section id="uploads" className="scroll-mt-24 border-t border-border py-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 className="mb-4 text-2xl text-primary">Document Uploads</h2>
+            <p className="mb-8 text-sm text-muted-foreground">Existing menus, invoices, prep sheets, and project files. Uploaded files are stored; automatic document analysis is not implemented.</p>
             <div
               onDragOver={(e) => {
                 e.preventDefault();
