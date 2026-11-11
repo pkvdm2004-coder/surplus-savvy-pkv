@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Leaf, RotateCcw } from 'lucide-react';
 import kitchenImage from '@/assets/hero-kitchen.jpg';
 import { demoSteps, moveDemo } from '@/lib/demo';
+import { VenturePresentation } from '@/components/venture-presentation';
 
 export const Route = createFileRoute('/demo')({
   head: () => ({ meta: [
     { title: 'Demo — Integrated Venture Walkthrough | AURA Company' },
-    { name: 'description', content: 'Explore nine connected AURA modules, from restaurant inventory and surplus estimates to pricing, marketing, guided recommendations and documented evidence.' },
+    { name: 'description', content: 'Explore AURA’s nine-module walkthrough, system map, potential impact, subscription model and proposed Version 2 roadmap.' },
     { property: 'og:title', content: 'AURA Demo — One Connected Restaurant Venture' },
-    { property: 'og:description', content: 'A guided walkthrough of AURA’s working modules, real-data dashboard and development history, with clear limits and planned capabilities.' },
+    { property: 'og:description', content: 'AURA’s working modules and human checkpoints, potential benefits, hypothetical revenue model and future development proposals.' },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
   ] }),
@@ -58,7 +59,7 @@ function Demo() {
               <p className="flex items-center gap-2 text-sm font-semibold text-primary"><Check className="h-4 w-4" />Nine modules, one venture</p><h2 className="mt-3 text-2xl leading-snug sm:text-3xl">An integrated foundation. Not a proven outcome.</h2>
               <p className="mt-6 leading-relaxed">Inventory and Predictions establish the operational starting point. Research informs the proposition; Product and Pricing frame the offering and revenue assumptions. Marketing communicates it, while Chat supports human-reviewed decisions. Dashboard brings stored evidence together, and Docs preserves the development trail.</p>
               <p className="mt-5 leading-relaxed text-muted-foreground">The modules are connected through navigation, shared inputs and existing storage—not an autonomous end-to-end restaurant workflow. No customer outcomes, financial performance or food-waste reductions have been validated by this demonstration.</p>
-              <div className="mt-6 border-l-2 border-border pl-4"><h3 className="font-body text-sm font-semibold text-primary">Still ahead</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Advanced forecasting and broader analytics remain proposed capabilities. Detailed agent mapping, impact assessment, viability analysis and the Version 2 roadmap are reserved for the next development step.</p></div>
+              <div className="mt-6 border-l-2 border-border pl-4"><h3 className="font-body text-sm font-semibold text-primary">Venture perspective</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">The sections below map system relationships, distinguish potential impact from measured results, explain subscription assumptions and outline proposed Version 2 development. Advanced forecasting and broader analytics remain future capabilities.</p></div>
               <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/dashboard">Open Dashboard<ArrowUpRight /></Link></Button><Button asChild variant="outline"><Link to="/docs">View development evidence<ArrowRight /></Link></Button></div>
             </>}
           </div>
@@ -69,5 +70,6 @@ function Demo() {
         </div>
       </div>
     </section>
+    <VenturePresentation />
   </main><Footer /></div>;
 }

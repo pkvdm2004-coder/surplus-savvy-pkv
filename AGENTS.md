@@ -15,4 +15,4 @@
 - Share typed navigation links between the header and footer so all existing and reserved pages remain reachable without menu drift.
 - Load dashboard previews for Inventory and Research through safe external read projections; use the existing get_dashboard_counts RPC for all other dashboard totals without reading their individual records, and never invent counts on failures or empty filtered reads.
 - Keep documentation history and verbatim prompts in browser-safe source data with explicit provenance and completion status; documentation is static and preserves the existing document-upload integration.
-- Keep the Demo walkthrough in typed browser-safe data with client-only navigation state and links to real module routes; it explains capabilities without duplicating their operations or querying storage.
+- Keep the Demo walkthrough in typed browser-safe data with client-only navigation state and links to real module routes; its static venture presentation reuses shared plan prices and explains capabilities without duplicating operations or querying storage.

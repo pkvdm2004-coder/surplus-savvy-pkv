@@ -1,6 +1,17 @@
 import { test, expect } from 'bun:test';
 import { demoSteps, moveDemo } from './demo';
 import { navigationLinks } from './navigation';
+import { tiers } from './plans';
+
+test('Starter subscription remains $99 per month', () => {
+  expect(tiers.find(tier => tier.name === 'Starter')?.monthly).toBe(99);
+});
+test('Professional subscription remains $249 per month', () => {
+  expect(tiers.find(tier => tier.name === 'Professional')?.monthly).toBe(249);
+});
+test('Enterprise subscription remains $599 per month', () => {
+  expect(tiers.find(tier => tier.name === 'Enterprise')?.monthly).toBe(599);
+});
 
 test('walkthrough includes the nine requested modules in order with existing destinations', () => {
   expect(demoSteps.map(step => step.to)).toEqual(['/inventory', '/predictions', '/research', '/product', '/pricing', '/marketing', '/chat', '/dashboard', '/docs']);
